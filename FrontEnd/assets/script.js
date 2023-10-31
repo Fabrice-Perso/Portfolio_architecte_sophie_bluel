@@ -19,6 +19,7 @@ function fetchWorks() {
 
 function displayWorks(works) {
   const gallery = document.querySelector(".gallery");
+  gallery.innerHTML = ""; // Réinitialisez la galerie à chaque appel
 
   works.forEach((work) => {
     const figure = document.createElement("figure");
@@ -34,7 +35,6 @@ function displayWorks(works) {
     gallery.appendChild(figure);
   });
 
-  // Ajoutez un log pour vérifier que les données ont été traitées avec succès
   console.log("Données récupérées et affichées avec succès :", works);
 }
 
