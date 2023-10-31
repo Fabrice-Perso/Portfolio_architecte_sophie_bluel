@@ -1,4 +1,5 @@
 let worksData; // Variable globale pour stocker les données
+let categories; // Variable globale pour stocker les catégories
 
 function fetchWorks() {
   fetch("http://localhost:5678/api/works")
@@ -40,15 +41,17 @@ function displayWorks(works) {
 
 const categoryButtons = document.querySelector("#category-buttons");
 
+// Fonction pour récupérer les catégories via l'API
 function fetchCategories() {
-  fetch("http://localhost:5678/api/categories")
+  fetch("http://localhost:5678/api/categories") // Assurez-vous que l'URL est correcte
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Réponse réseau incorrecte : ${response.status}`);
       }
       return response.json();
     })
-    .then((categories) => {
+    .then((data) => {
+      categories = data; // Stockez les catégories dans la variable globale
       displayCategories(categories);
     })
     .catch((error) => {
@@ -61,14 +64,10 @@ function displayCategories(categories) {
   const allButton = document.createElement("button");
   allButton.id = "btn-all";
   allButton.textContent = "Tous";
+  allButton.classList.add("button-filtre", "active"); // Ajoutez les classes "button-filtre" et "active"
 
   // Ajoutez le bouton "Tous" au conteneur des boutons de catégorie
   categoryButtons.appendChild(allButton);
-
-  // Ajoutez un gestionnaire d'événements pour afficher tous les travaux lorsque le bouton "Tous" est cliqué
-  allButton.addEventListener("click", function () {
-    displayWorks(worksData); // Afficher tous les travaux
-  });
 
   // Générez les boutons de catégorie comme vous l'avez fait précédemment
   categories.forEach((category) => {
@@ -76,12 +75,7 @@ function displayCategories(categories) {
     const categoryId = `btn-${category.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}`;
     button.id = categoryId;
     button.textContent = category.name;
-
-    // Ajoutez un gestionnaire d'événements click pour chaque bouton de filtre
-    button.addEventListener("click", function () {
-      const filteredWorks = worksData.filter((work) => work.category.name === category.name);
-      displayWorks(filteredWorks);
-    });
+    button.classList.add("button-filtre"); // Ajoutez la classe "button-filtre" aux autres boutons
 
     categoryButtons.appendChild(button);
   });
@@ -93,28 +87,30 @@ fetchWorks();
 // Appelez la fonction fetchCategories pour obtenir les catégories
 fetchCategories();
 
-// Ajoutez un gestionnaire d'événements click pour chaque bouton de filtre
-const btnObjets = document.getElementById("btn-objets");
-if (btnObjets) {
-  document.getElementById("btn-objets").addEventListener("click", function () {
-    // Filtre les travaux par catégorie "Objets"
-    const filteredWorks = worksData.filter((work) => work.category.name === "Objets");
-    displayWorks(filteredWorks);
-  });
-}
-const btnAppart = document.getElementById("btn-appartements");
-if (btnAppart) {
-  document.getElementById("btn-appartements").addEventListener("click", function () {
-    // Filtre les travaux par catégorie "Appartements"
-    const filteredWorks = worksData.filter((work) => work.category.name === "Appartements");
-    displayWorks(filteredWorks);
-  });
-}
-const btnHotelRestau = document.getElementById("btn-hotels-restaurants");
-if (btnHotelRestau) {
-  document.getElementById("btn-hotels-restaurants").addEventListener("click", function () {
-    // Filtre les travaux par catégorie "Hotels & restaurants"
-    const filteredWorks = worksData.filter((work) => work.category.name === "Hotels & restaurants");
-    displayWorks(filteredWorks);
-  });
-}
+// Sélectionnez l'élément contenant les boutons de filtre (categoryButtons)
+categoryButtons.addEventListener("click", function (event) {
+  // Vérifiez si l'élément cliqué (event.target) est un bouton avec la classe "button-filtre"
+  if (event.target.classList.contains("button-filtre")) {
+    // Supprimez la classe "active" de tous les boutons de filtre
+    document.querySelectorAll(".button-filtre").forEach(function (btn) {
+      btn.classList.remove("active");
+    });
+    // Ajoutez la classe "active" au bouton cliqué
+    event.target.classList.add("active");
+
+    // Récupérez la catégorie correspondante à partir de l'ID du bouton
+    const buttonId = event.target.id;
+    const category = categories.find((cat) => `btn-${cat.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}` === buttonId);
+
+    // Si une catégorie correspondante est trouvée
+    if (category) {
+      // Filtrez les travaux par la catégorie correspondante
+      const filteredWorks = worksData.filter((work) => work.category.name === category.name);
+      // Appelez la fonction displayWorks pour afficher les travaux filtrés
+      displayWorks(filteredWorks);
+    } else if (buttonId === "btn-all") {
+      // Si le bouton "Tous" est cliqué, affichez tous les travaux
+      displayWorks(worksData);
+    }
+  }
+});
