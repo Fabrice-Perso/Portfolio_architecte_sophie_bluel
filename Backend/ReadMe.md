@@ -20,5 +20,3 @@ Lien pour voir la
 [documentation Swagger](http://localhost:5678/api-docs/)
 
 Pour lire la documentation, utiliser Chrome ou Firefox
-
-curl -X POST http://localhost:5678/api/users/login -H "Content-Type: application/json" -d '{"email": "sophie.bluel@test.tld", "password": "S0phie"}'
