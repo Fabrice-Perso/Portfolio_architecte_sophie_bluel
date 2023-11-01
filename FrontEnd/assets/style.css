@@ -172,6 +172,7 @@ nav ul {
 nav li {
   padding: 0 10px;
   font-size: 1.2em;
+  cursor: pointer;
 }
 
 li:hover {
@@ -301,52 +302,63 @@ button {
   background-color: white;
 }
 
-/* button.submit-button {
-  font-family: "Syne";
-  font-weight: 700;
-  color: white;
-  margin: 2em auto;
-
-  text-align: center;
-  flex-shrink: 0;
-  height: 2.3125rem;
-  border-radius: 3.75rem;
-  border: 1px solid #1d6154;
-  background: #1d6154;
-  flex-shrink: 0;
-  height: 2.3125rem;
-} */
 footer nav ul {
   display: flex;
   justify-content: flex-end;
   margin: 2em;
 }
 
-/* #category-buttons {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-	gap: 0.62rem;
-	justify-content: center;
-	margin: 10px;
-  }
-  
-  #category-buttons button {
-	font-family: "Syne";
-	font-weight: 700;
-	width: 100%;
-	text-align: center;
-	border-radius: 60px;
-	color: #1d6154;
-	background-color: white;
-	height: 2.3125rem;
-  }
-  
-  #category-buttons button.active {
-	color: white;
-	background-color: #1d6154;
-  }
-  
-  #category-buttons button.inactive {
-	color: #1d6154;
-	background-color: white;
-  } */
+footer nav ul li {
+  font-size: 0.875rem;
+}
+
+/* Styles pour la div en mode édition */
+.edit-mode-div {
+  background-color: black;
+  height: 3.6875rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Styles pour l'icône Font Awesome */
+.edit-mode-icon {
+  color: white;
+}
+
+/* Styles pour le texte */
+.edit-mode-text {
+  color: white;
+  margin-left: 5px;
+}
+
+/* Ajoutez ce CSS dans votre fichier CSS dédié */
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-container span {
+  margin-left: 5px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-family: Work Sans;
+}
+
+.title-container i {
+  margin-left: 20px;
+  margin-bottom: 25px;
+}
+
+/* Définissez la taille de police pour l'icône et le texte */
+.title-container span,
+.title-container i {
+  color: black;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+}

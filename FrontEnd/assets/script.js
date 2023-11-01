@@ -1,6 +1,7 @@
 let worksData; // Variable globale pour stocker les données
 let categories; // Variable globale pour stocker les catégories
 
+// Fonction pour récupérer les travaux via l'API
 function fetchWorks() {
   fetch("http://localhost:5678/api/works")
     .then((response) => {
@@ -18,6 +19,7 @@ function fetchWorks() {
     });
 }
 
+// Fonction pour afficher les travaux
 function displayWorks(works) {
   const gallery = document.querySelector(".gallery");
   gallery.innerHTML = ""; // Réinitialisez la galerie à chaque appel
@@ -59,6 +61,7 @@ function fetchCategories() {
     });
 }
 
+// Fonction pour afficher les catégories
 function displayCategories(categories) {
   // Créez un bouton "Tous" pour afficher tous les travaux
   const allButton = document.createElement("button");
@@ -114,3 +117,118 @@ categoryButtons.addEventListener("click", function (event) {
     }
   }
 });
+
+// Fonction pour créer la div en mode édition
+function createEditModeDiv() {
+  // Créez la div en mode édition
+  const editModeDiv = document.createElement("div");
+  editModeDiv.classList.add("edit-mode-div"); // Ajoutez la classe CSS
+
+  // Créez une icône Font Awesome
+  const editModeIcon = document.createElement("i");
+  editModeIcon.classList.add("fa-regular", "fa-pen-to-square", "edit-mode-icon"); // Ajoutez la classe CSS
+  editModeDiv.appendChild(editModeIcon);
+
+  // Créez un élément de texte
+  const editModeText = document.createElement("p");
+  editModeText.textContent = "Mode édition";
+  editModeText.classList.add("edit-mode-text"); // Ajoutez la classe CSS
+  editModeDiv.appendChild(editModeText);
+
+  // Insérez la div en haut de la page
+  document.body.insertBefore(editModeDiv, document.body.firstChild);
+}
+
+// Fonction pour supprimer la div en mode édition
+function removeEditModeDiv() {
+  const editModeDiv = document.querySelector(".edit-mode-div");
+  if (editModeDiv) {
+    editModeDiv.remove();
+  }
+}
+
+// Fonction pour créer le mode édition projet
+function createEditModeProjet() {
+  // Sélectionnez le titre h2
+  const title = document.querySelector("#portfolio h2");
+
+  // Créez un conteneur pour le titre, l'icône et le texte
+  const titleContainer = document.createElement("div");
+  titleContainer.classList.add("title-container");
+
+  // Créez le texte "Modifier" avec le style approprié
+  const editText = document.createElement("span");
+  editText.textContent = "modifier";
+  editText.id = "update_projet"; // Ajoutez l'attribut id
+
+  // Créez l'icône Font Awesome avec le style approprié
+  const editIcon = document.createElement("i");
+  editIcon.classList.add("fa-regular", "fa-pen-to-square");
+
+  // Retirez le titre h2 de son emplacement actuel
+  title.remove();
+
+  // Ajoutez le titre, l'icône et le texte au conteneur
+  titleContainer.appendChild(title);
+  titleContainer.appendChild(editIcon);
+  titleContainer.appendChild(editText);
+
+  // Sélectionnez la section #portfolio
+  const portfolioSection = document.querySelector("#portfolio");
+
+  // Ajoutez le conteneur au début de la section
+  portfolioSection.insertBefore(titleContainer, portfolioSection.firstChild);
+}
+
+// Fonction pour supprimer le mode édition projet
+function removeEditModeProjet() {
+  // Sélectionnez le titre en mode édition
+  const titleContainer = document.querySelector("#portfolio .title-container");
+
+  // Supprimez le titre en mode édition s'il existe
+  if (titleContainer) {
+    titleContainer.remove();
+  }
+}
+
+// Gestion de la déconnexion
+function handleLogout() {
+  localStorage.removeItem("token");
+  localStorage.setItem("isLoggedIn", "false");
+  loginLink.textContent = "Log In";
+  removeEditModeDiv();
+  removeEditModeProjet();
+}
+
+// Vérifiez si l'utilisateur est connecté lors du chargement initial
+const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+if (isLoggedIn === "true") {
+  document.getElementById("login-link").textContent = "Log Out";
+  createEditModeDiv();
+  createEditModeProjet();
+} else {
+  document.getElementById("login-link").textContent = "Log In";
+  removeEditModeDiv();
+  removeEditModeProjet();
+}
+
+const loginLink = document.getElementById("login-link");
+
+loginLink.addEventListener("click", (event) => {
+  event.preventDefault();
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  if (isLoggedIn) {
+    handleLogout(); // Si l'utilisateur est connecté, déconnectez-le
+  } else {
+    window.location.href = "login.html"; // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
+  }
+});
+
+function updateNavigation() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  loginLink.textContent = isLoggedIn ? "Log Out" : "Log In";
+}
+
+updateNavigation();
