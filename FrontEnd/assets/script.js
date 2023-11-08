@@ -249,21 +249,21 @@ function createModal() {
   var modalContent = document.createElement("div");
   modalContent.classList.add("modal-content");
 
-  // Créez une nouvelle div qui sera le conteneur du corps de la modale
-  var modalBody = document.createElement("div");
-  modalBody.classList.add("modal-body");
-
   // Ajoutez un élément span pour pouvoir fermer la modale
   var closeBtn = document.createElement("span");
   closeBtn.classList.add("close");
   closeBtn.innerHTML = "&times;";
-  modalContent.appendChild(closeBtn);
+  modalContent.appendChild(closeBtn); // Le bouton de fermeture est ajouté à modalBody
+
+  // Créez la div intermédiaire qui contiendra tout le corps de la modale
+  var modalBody = document.createElement("div");
+  modalBody.classList.add("modal-body");
 
   // Ajoutez un titre à la modale
   var modalTitle = document.createElement("h2");
   modalTitle.textContent = "Galerie photo";
   modalTitle.classList.add("modal-title"); // Ajoutez une classe pour le style du titre
-  modalContent.appendChild(modalTitle); // Ajoutez le titre au contenu de la modale
+  modalBody.appendChild(modalTitle); // Ajoutez le titre au modalBody
 
   // Ajoutez une div pour contenir les images
   var imagesContainer = document.createElement("div");
@@ -298,33 +298,34 @@ function createModal() {
       deleteIconContainer.appendChild(deleteIcon);
 
       // Ajoute le conteneur de l'icône au wrapper de l'image
-      imageWrapper.appendChild(img); // Assurez-vous d'ajouter img en premier
-      imageWrapper.appendChild(deleteIconContainer); // Ensuite, ajoutez le conteneur d'icône
+      imageWrapper.appendChild(img);
+      imageWrapper.appendChild(deleteIconContainer);
 
       // Ajoutez l'image wrapper à la div des images
       imagesContainer.appendChild(imageWrapper);
     });
   }
 
-  // Ajoutez le conteneur d'images au contenu de la modale
-  modalContent.appendChild(imagesContainer);
+  // Ajoutez la div pour contenir les images au modalBody
+  modalBody.appendChild(imagesContainer);
 
   // Ajoutez une div pour centrer le bouton d'ajout de photo
   var buttonContainer = document.createElement("div");
-  buttonContainer.classList.add("button-container"); // Une nouvelle classe pour le style
+  buttonContainer.classList.add("button-container");
 
   // Créez le bouton pour ajouter une photo
   var addButton = document.createElement("button");
   addButton.textContent = "Ajouter une photo";
   addButton.classList.add("add-button");
-  // Vous pouvez ajouter un gestionnaire d'événements ici pour le clic du bouton
-  // addButton.onclick = function() { /* Code pour ajouter une photo */ };
 
   // Ajoutez le bouton à son conteneur
   buttonContainer.appendChild(addButton);
 
-  // Ajoutez le conteneur de boutons au contenu de la modale
-  modalContent.appendChild(buttonContainer);
+  // Ajoutez le conteneur de boutons au modalBody
+  modalBody.appendChild(buttonContainer);
+
+  // Ajoutez le modalBody au contenu de la modale
+  modalContent.appendChild(modalBody);
 
   // Ajoutez le contenu de la modale à la modale
   modal.appendChild(modalContent);
@@ -346,7 +347,7 @@ function createModal() {
 }
 
 // Fonction pour créer la modale
-function createModalTest() {
+function createModal_Add() {
   // Créez un nouvel élément DIV pour la modale
   var modal = document.createElement("div");
   modal.setAttribute("id", "myModal");
@@ -462,7 +463,7 @@ function showModal() {
 // Lorsque l'utilisateur clique sur le bouton, appelez showModal()
 document.getElementById("update_projet").onclick = function () {
   console.log("action sur update_projet");
-  createModalTest();
+  createModal();
   showModal();
 };
 

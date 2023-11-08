@@ -380,8 +380,7 @@ span i {
   transform: translate(-50%, -50%);
   background-color: #fefefe;
   /* margin: 15% auto; 15% depuis le haut et centré horizontalement */
-  padding: 20px;
-  border: 1px solid #888;
+  padding: 0 20px;
   /* width: 45%; Largeur de la modale */
   border-radius: 10px;
   align-items: center;
@@ -420,7 +419,6 @@ span i {
 /* CSS pour le conteneur d'images dans la modale */
 .images-container {
   display: grid;
-  /* grid-template-columns: repeat(5, 20%); */
   grid-template-columns: repeat(5, 1fr); /* Crée 5 colonnes de taille égale */
   gap: 20px 10px; /* Espace entre les images, à la fois horizontalement et verticalement */
   justify-items: center; /* Centre les items horizontalement dans leurs cellules */
@@ -429,15 +427,15 @@ span i {
 
 .modal-image {
   /* flex: 0 0 calc(20%); Chaque image prendra 20% de l'espace disponible, moins 10px pour le padding */
-  /* width: 4.91419rem; */
-  height: 7rem;
+  width: 4rem;
+  height: auto;
   object-fit: cover; /* Cela garantira que les images couvrent l'espace alloué sans être déformées */
 }
 
 .button-container {
   display: flex;
   justify-content: center; /* Centre le bouton horizontalement */
-  padding: 2.81rem 0 2.81rem 0;
+  padding: 2rem 0;
   border-top: 0.0625rem solid #b3b3b3; /* Bordure en bas du conteneur */
 }
 
@@ -451,7 +449,6 @@ span i {
   font-size: 1rem;
   padding: 0.56rem 2.56rem;
   cursor: pointer;
-  border: 1px solid #1d6154;
   color: white;
   background-color: #1d6154;
 }
