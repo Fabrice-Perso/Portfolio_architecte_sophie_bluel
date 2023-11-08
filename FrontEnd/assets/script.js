@@ -86,6 +86,7 @@ function displayCategories(categories) {
 
 // Appelez la fonction fetchWorks pour récupérer les données
 fetchWorks();
+console.log("worksData", worksData);
 
 // Appelez la fonction fetchCategories pour obtenir les catégories
 fetchCategories();
@@ -158,19 +159,23 @@ function createEditModeProjet() {
 
   // Créez le texte "Modifier" avec le style approprié
   const editText = document.createElement("span");
-  editText.textContent = "modifier";
   editText.id = "update_projet"; // Ajoutez l'attribut id
 
   // Créez l'icône Font Awesome avec le style approprié
   const editIcon = document.createElement("i");
   editIcon.classList.add("fa-regular", "fa-pen-to-square");
 
+  // Ajoutez d'abord l'icône au span
+  editText.appendChild(editIcon);
+
+  // Ensuite, définissez le texte du span. Cela gardera l'icône avant le texte.
+  editText.append(" modifier"); // Utilisez append pour ajouter du texte après l'icône
+
   // Retirez le titre h2 de son emplacement actuel
   title.remove();
 
-  // Ajoutez le titre, l'icône et le texte au conteneur
+  // Ajoutez le titre, et le conteneur (qui inclut maintenant l'icône et le texte) à titleContainer
   titleContainer.appendChild(title);
-  titleContainer.appendChild(editIcon);
   titleContainer.appendChild(editText);
 
   // Sélectionnez la section #portfolio
@@ -232,3 +237,238 @@ function updateNavigation() {
 }
 
 updateNavigation();
+
+// Fonction pour créer la modale
+function createModal() {
+  // Créez un nouvel élément DIV pour la modale
+  var modal = document.createElement("div");
+  modal.setAttribute("id", "myModal");
+  modal.classList.add("modal");
+
+  // Créez le contenu de la modale
+  var modalContent = document.createElement("div");
+  modalContent.classList.add("modal-content");
+
+  // Créez une nouvelle div qui sera le conteneur du corps de la modale
+  var modalBody = document.createElement("div");
+  modalBody.classList.add("modal-body");
+
+  // Ajoutez un élément span pour pouvoir fermer la modale
+  var closeBtn = document.createElement("span");
+  closeBtn.classList.add("close");
+  closeBtn.innerHTML = "&times;";
+  modalContent.appendChild(closeBtn);
+
+  // Ajoutez un titre à la modale
+  var modalTitle = document.createElement("h2");
+  modalTitle.textContent = "Galerie photo";
+  modalTitle.classList.add("modal-title"); // Ajoutez une classe pour le style du titre
+  modalContent.appendChild(modalTitle); // Ajoutez le titre au contenu de la modale
+
+  // Ajoutez une div pour contenir les images
+  var imagesContainer = document.createElement("div");
+  imagesContainer.classList.add("images-container");
+
+  // Vérifiez si worksData contient des données
+  if (worksData) {
+    // Bouclez sur chaque travail et créez une image pour l'ajouter au conteneur
+    worksData.forEach((work) => {
+      const imageWrapper = document.createElement("div");
+      imageWrapper.classList.add("modal-image-wrapper");
+
+      const img = document.createElement("img");
+      img.src = work.imageUrl;
+      img.alt = work.title;
+      img.classList.add("modal-image"); // Ajoutez une classe pour le style des images
+
+      // Ajoute un conteneur pour l'icône de corbeille
+      const deleteIconContainer = document.createElement("div");
+      deleteIconContainer.classList.add("delete-icon-container");
+
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("fa-regular", "fa-trash-can");
+      deleteIcon.setAttribute("data-id", work.id); // Attachez l'id du travail à l'icône
+
+      // Ajoutez un écouteur d'événement sur l'icône pour gérer la suppression
+      deleteIcon.addEventListener("click", function () {
+        deleteWork(this.getAttribute("data-id")); // Gérer la suppression du travail
+      });
+
+      // Place l'icône dans le conteneur
+      deleteIconContainer.appendChild(deleteIcon);
+
+      // Ajoute le conteneur de l'icône au wrapper de l'image
+      imageWrapper.appendChild(img); // Assurez-vous d'ajouter img en premier
+      imageWrapper.appendChild(deleteIconContainer); // Ensuite, ajoutez le conteneur d'icône
+
+      // Ajoutez l'image wrapper à la div des images
+      imagesContainer.appendChild(imageWrapper);
+    });
+  }
+
+  // Ajoutez le conteneur d'images au contenu de la modale
+  modalContent.appendChild(imagesContainer);
+
+  // Ajoutez une div pour centrer le bouton d'ajout de photo
+  var buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("button-container"); // Une nouvelle classe pour le style
+
+  // Créez le bouton pour ajouter une photo
+  var addButton = document.createElement("button");
+  addButton.textContent = "Ajouter une photo";
+  addButton.classList.add("add-button");
+  // Vous pouvez ajouter un gestionnaire d'événements ici pour le clic du bouton
+  // addButton.onclick = function() { /* Code pour ajouter une photo */ };
+
+  // Ajoutez le bouton à son conteneur
+  buttonContainer.appendChild(addButton);
+
+  // Ajoutez le conteneur de boutons au contenu de la modale
+  modalContent.appendChild(buttonContainer);
+
+  // Ajoutez le contenu de la modale à la modale
+  modal.appendChild(modalContent);
+
+  // Ajoutez la modale au corps du document
+  document.body.appendChild(modal);
+
+  // Gestion des clics sur le bouton de fermeture
+  closeBtn.onclick = function () {
+    modal.parentNode.removeChild(modal);
+  };
+
+  // Gestion des clics en dehors de la modale
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.parentNode.removeChild(modal);
+    }
+  };
+}
+
+// Fonction pour créer la modale
+function createModalTest() {
+  // Créez un nouvel élément DIV pour la modale
+  var modal = document.createElement("div");
+  modal.setAttribute("id", "myModal");
+  modal.classList.add("modal");
+
+  // Créez le contenu de la modale
+  var modalContent = document.createElement("div");
+  modalContent.classList.add("modal-content");
+
+  // Ajoutez un élément span pour pouvoir fermer la modale
+  var closeBtn = document.createElement("span");
+  closeBtn.classList.add("close");
+  closeBtn.innerHTML = "&times;";
+  modalContent.appendChild(closeBtn); // Le bouton de fermeture est ajouté à modalBody
+
+  // Créez la div intermédiaire qui contiendra tout le corps de la modale
+  var modalBody = document.createElement("div");
+  modalBody.classList.add("modal-body");
+
+  // Ajoutez un titre à la modale
+  var modalTitle = document.createElement("h2");
+  modalTitle.textContent = "Galerie photo";
+  modalTitle.classList.add("modal-title"); // Ajoutez une classe pour le style du titre
+  modalBody.appendChild(modalTitle); // Ajoutez le titre au modalBody
+
+  // Ajoutez une div pour contenir les images
+  var imagesContainer = document.createElement("div");
+  imagesContainer.classList.add("images-container");
+
+  // Vérifiez si worksData contient des données
+  if (worksData) {
+    // Bouclez sur chaque travail et créez une image pour l'ajouter au conteneur
+    worksData.forEach((work) => {
+      const imageWrapper = document.createElement("div");
+      imageWrapper.classList.add("modal-image-wrapper");
+
+      const img = document.createElement("img");
+      img.src = work.imageUrl;
+      img.alt = work.title;
+      img.classList.add("modal-image"); // Ajoutez une classe pour le style des images
+
+      // Ajoute un conteneur pour l'icône de corbeille
+      const deleteIconContainer = document.createElement("div");
+      deleteIconContainer.classList.add("delete-icon-container");
+
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("fa-regular", "fa-trash-can");
+      deleteIcon.setAttribute("data-id", work.id); // Attachez l'id du travail à l'icône
+
+      // Ajoutez un écouteur d'événement sur l'icône pour gérer la suppression
+      deleteIcon.addEventListener("click", function () {
+        deleteWork(this.getAttribute("data-id")); // Gérer la suppression du travail
+      });
+
+      // Place l'icône dans le conteneur
+      deleteIconContainer.appendChild(deleteIcon);
+
+      // Ajoute le conteneur de l'icône au wrapper de l'image
+      imageWrapper.appendChild(img);
+      imageWrapper.appendChild(deleteIconContainer);
+
+      // Ajoutez l'image wrapper à la div des images
+      imagesContainer.appendChild(imageWrapper);
+    });
+  }
+
+  // Ajoutez la div pour contenir les images au modalBody
+  modalBody.appendChild(imagesContainer);
+
+  // Ajoutez une div pour centrer le bouton d'ajout de photo
+  var buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("button-container");
+
+  // Créez le bouton pour ajouter une photo
+  var addButton = document.createElement("button");
+  addButton.textContent = "Ajouter une photo";
+  addButton.classList.add("add-button");
+
+  // Ajoutez le bouton à son conteneur
+  buttonContainer.appendChild(addButton);
+
+  // Ajoutez le conteneur de boutons au modalBody
+  modalBody.appendChild(buttonContainer);
+
+  // Ajoutez le modalBody au contenu de la modale
+  modalContent.appendChild(modalBody);
+
+  // Ajoutez le contenu de la modale à la modale
+  modal.appendChild(modalContent);
+
+  // Ajoutez la modale au corps du document
+  document.body.appendChild(modal);
+
+  // Gestion des clics sur le bouton de fermeture
+  closeBtn.onclick = function () {
+    modal.parentNode.removeChild(modal);
+  };
+
+  // Gestion des clics en dehors de la modale
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.parentNode.removeChild(modal);
+    }
+  };
+}
+
+// Fonction pour afficher la modale
+function showModal() {
+  var modal = document.getElementById("myModal") || createModal();
+  modal.style.display = "block";
+}
+
+// Lorsque l'utilisateur clique sur le bouton, appelez showModal()
+document.getElementById("update_projet").onclick = function () {
+  console.log("action sur update_projet");
+  createModalTest();
+  showModal();
+};
+
+// Fonction pour gérer la suppression d'un travail
+function deleteWork(workId) {
+  // Ici, tu pourrais appeler l'API pour supprimer le travail en utilisant workId
+  console.log("Supprimer le travail avec l'ID :", workId);
+  // Ajoute la logique d'appel API ici...
+}

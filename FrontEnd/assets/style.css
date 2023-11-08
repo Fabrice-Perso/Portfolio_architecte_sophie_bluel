@@ -342,23 +342,143 @@ footer nav ul li {
 
 .title-container span {
   margin-left: 5px;
-  margin-bottom: 25px;
   text-align: center;
   font-family: Work Sans;
-}
-
-.title-container i {
-  margin-left: 20px;
-  margin-bottom: 25px;
-}
-
-/* Définissez la taille de police pour l'icône et le texte */
-.title-container span,
-.title-container i {
   color: black;
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   cursor: pointer;
+}
+
+span i {
+  margin-left: 20px;
+  margin-bottom: 25px;
+}
+
+/* CSS pour la modale */
+.modal {
+  display: none; /* La modale est cachée par défaut */
+  position: fixed; /* Elle sera fixée par-dessus tout le reste */
+  z-index: 1; /* Elle se situe au-dessus des autres éléments */
+  left: 0;
+  top: 0;
+  width: 100%; /* Pleine largeur */
+  height: 100%; /* Pleine hauteur */
+  overflow: auto; /* Pour gérer le défilement si nécessaire */
+  background-color: rgb(0, 0, 0); /* Fond sombre */
+  background-color: rgba(0, 0, 0, 0.4); /* Noir avec opacité */
+  transform: scale(1.1);
+  transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fefefe;
+  /* margin: 15% auto; 15% depuis le haut et centré horizontalement */
+  padding: 20px;
+  border: 1px solid #888;
+  /* width: 45%; Largeur de la modale */
+  border-radius: 10px;
+  align-items: center;
+}
+
+.close {
+  color: #000;
+  float: right;
+  font-size: 1.5rem;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.modal-body {
+  padding: 2.75rem 4rem 0rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.88rem;
+}
+
+.modal-title {
+  text-align: center;
+  padding-top: 2.05rem 0rem;
+  color: #000;
+  text-align: center;
+  font-family: Work Sans;
+  font-size: 1.625rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+/* CSS pour le conteneur d'images dans la modale */
+.images-container {
+  display: grid;
+  /* grid-template-columns: repeat(5, 20%); */
+  grid-template-columns: repeat(5, 1fr); /* Crée 5 colonnes de taille égale */
+  gap: 20px 10px; /* Espace entre les images, à la fois horizontalement et verticalement */
+  justify-items: center; /* Centre les items horizontalement dans leurs cellules */
+  margin-bottom: 10px;
+}
+
+.modal-image {
+  /* flex: 0 0 calc(20%); Chaque image prendra 20% de l'espace disponible, moins 10px pour le padding */
+  /* width: 4.91419rem; */
+  height: 7rem;
+  object-fit: cover; /* Cela garantira que les images couvrent l'espace alloué sans être déformées */
+}
+
+.button-container {
+  display: flex;
+  justify-content: center; /* Centre le bouton horizontalement */
+  padding: 2.81rem 0 2.81rem 0;
+  border-top: 0.0625rem solid #b3b3b3; /* Bordure en bas du conteneur */
+}
+
+.add-button {
+  font-weight: 700;
+  text-align: center;
+  flex-shrink: 0;
+  height: 2.3125rem;
+  border-radius: 3.75rem;
+  font-family: Syne;
+  font-size: 1rem;
+  padding: 0.56rem 2.56rem;
+  cursor: pointer;
+  border: 1px solid #1d6154;
+  color: white;
+  background-color: #1d6154;
+}
+/* Style pour le conteneur de l'image dans la modale */
+.modal-image-wrapper {
+  position: relative; /* Permet le positionnement absolu des éléments enfants */
+  display: inline-block; /* Pour afficher les images côte à côte */
+}
+
+/* Style pour le conteneur de l'icône de corbeille dans la modale */
+.delete-icon-container {
+  position: absolute; /* Positionnement absolu par rapport au parent relatif */
+  top: 0.3rem; /* Aligné avec le haut du conteneur */
+  right: 0.3rem; /* Espace de 0.3rem avec le bord droit du conteneur de l'image */
+  background-color: black; /* Fond noir pour la visibilité de l'icône */
+  width: 1.0625rem;
+  height: 1.0625rem;
+  display: flex; /* Utilise flexbox pour centrer l'icône à l'intérieur du conteneur */
+  justify-content: center; /* Centre horizontalement */
+  align-items: center; /* Centre verticalement */
+  border-radius: 3px; /* Arrondit les coins du fond */
+}
+
+/* Style pour l'icône de corbeille dans la modale */
+.fa-trash-can {
+  /* Positionnement et style de l'icône elle-même */
+  font-size: 0.5625rem; /* Taille de l'icône */
+  color: white; /* Couleur de l'icône */
+  cursor: pointer; /* Changement du curseur pour indiquer une action */
 }

@@ -22,6 +22,8 @@ loginForm.addEventListener("submit", function (event) {
   })
     .then((response) => response.json())
     .then((data) => {
+      // console.log("data :", data);
+
       // Stockez le token ou les informations de connexion dans un emplacement sécurisé (par exemple, local storage)
       localStorage.setItem("token", data.token);
 
