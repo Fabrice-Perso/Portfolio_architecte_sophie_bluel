@@ -262,8 +262,11 @@ function createModal(worksData) {
     // Masquez le corps actuel de la modale
     const currentModalBody = document.querySelector(".modal-delete");
     const oldModalBody = document.querySelector(".modal-addpicture");
+    const backIcon = document.querySelector(".back-icon");
     oldModalBody.style.display = "none";
     currentModalBody.style.display = "flex";
+    // Rendez l'icône de retour visible
+    backIcon.classList.remove("visible");
   };
   modalHeader.appendChild(backIcon);
 

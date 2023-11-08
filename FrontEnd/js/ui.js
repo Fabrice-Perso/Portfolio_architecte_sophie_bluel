@@ -1,26 +1,9 @@
-let worksData; // Variable globale pour stocker les données
-let categories; // Variable globale pour stocker les catégories
-
-// Fonction pour récupérer les travaux via l'API
-function fetchWorks() {
-  fetch("http://localhost:5678/api/works")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Réponse réseau incorrecte : ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      worksData = data; // Stockez les données dans la variable globale
-      displayWorks(data);
-    })
-    .catch((error) => {
-      console.error("Une erreur s'est produite lors de la récupération des données :", error);
-    });
-}
+import { getWorksData } from "./store.js";
+import { createButtonContainer, createImagesContainer } from "./utils.js";
+import { fetchCategories } from "./api.js";
 
 // Fonction pour afficher les travaux
-function displayWorks(works) {
+export function displayWorks(works) {
   const gallery = document.querySelector(".gallery");
   gallery.innerHTML = ""; // Réinitialisez la galerie à chaque appel
 
@@ -41,30 +24,11 @@ function displayWorks(works) {
   console.log("Données récupérées et affichées avec succès :", works);
 }
 
-const categoryButtons = document.querySelector("#category-buttons");
-
-// Modifiez la fonction fetchCategories pour qu'elle accepte un callback
-function fetchCategories(callback) {
-  fetch("http://localhost:5678/api/categories")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Réponse réseau incorrecte : ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      // Si un callback est fourni, utilisez-le
-      if (callback && typeof callback === "function") {
-        callback(data);
-      }
-    })
-    .catch((error) => {
-      console.error("Erreur de récupération des catégories :", error);
-    });
-}
-
 // Fonction pour afficher les catégories
-function displayCategories(categories) {
+export function displayCategories(categories) {
+  console.log("function displayCategories Lue");
+  const categoryButtons = document.querySelector("#category-buttons");
+
   // Créez un bouton "Tous" pour afficher tous les travaux
   const allButton = document.createElement("button");
   allButton.id = "btn-all";
@@ -84,74 +48,38 @@ function displayCategories(categories) {
 
     categoryButtons.appendChild(button);
   });
-}
 
-// Appelez la fonction fetchWorks pour récupérer les données
-fetchWorks();
-console.log("worksData", worksData);
+  // Sélectionnez l'élément contenant les boutons de filtre (categoryButtons)
+  categoryButtons.addEventListener("click", function (event) {
+    // Vérifiez si l'élément cliqué (event.target) est un bouton avec la classe "button-filtre"
+    if (event.target.classList.contains("button-filtre")) {
+      // Supprimez la classe "active" de tous les boutons de filtre
+      document.querySelectorAll(".button-filtre").forEach(function (btn) {
+        btn.classList.remove("active");
+      });
+      // Ajoutez la classe "active" au bouton cliqué
+      event.target.classList.add("active");
 
-// Appelez la fonction fetchCategories pour obtenir les catégories
-fetchCategories();
+      // Récupérez la catégorie correspondante à partir de l'ID du bouton
+      const buttonId = event.target.id;
+      const category = categories.find((cat) => `btn-${cat.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}` === buttonId);
 
-// Sélectionnez l'élément contenant les boutons de filtre (categoryButtons)
-categoryButtons.addEventListener("click", function (event) {
-  // Vérifiez si l'élément cliqué (event.target) est un bouton avec la classe "button-filtre"
-  if (event.target.classList.contains("button-filtre")) {
-    // Supprimez la classe "active" de tous les boutons de filtre
-    document.querySelectorAll(".button-filtre").forEach(function (btn) {
-      btn.classList.remove("active");
-    });
-    // Ajoutez la classe "active" au bouton cliqué
-    event.target.classList.add("active");
-
-    // Récupérez la catégorie correspondante à partir de l'ID du bouton
-    const buttonId = event.target.id;
-    const category = categories.find((cat) => `btn-${cat.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}` === buttonId);
-
-    // Si une catégorie correspondante est trouvée
-    if (category) {
-      // Filtrez les travaux par la catégorie correspondante
-      const filteredWorks = worksData.filter((work) => work.category.name === category.name);
-      // Appelez la fonction displayWorks pour afficher les travaux filtrés
-      displayWorks(filteredWorks);
-    } else if (buttonId === "btn-all") {
-      // Si le bouton "Tous" est cliqué, affichez tous les travaux
-      displayWorks(worksData);
+      const works = getWorksData(); // Récupérez worksData depuis le store
+      // Si une catégorie correspondante est trouvée
+      if (category) {
+        // Filtrez les travaux par la catégorie correspondante
+        const filteredWorks = works.filter((work) => work.category.name === category.name);
+        // Appelez la fonction displayWorks pour afficher les travaux filtrés
+        displayWorks(filteredWorks);
+      } else if (buttonId === "btn-all") {
+        // Si le bouton "Tous" est cliqué, affichez tous les travaux
+        displayWorks(works);
+      }
     }
-  }
-});
-
-// Fonction pour créer la div en mode édition
-function createEditModeDiv() {
-  // Créez la div en mode édition
-  const editModeDiv = document.createElement("div");
-  editModeDiv.classList.add("edit-mode-div"); // Ajoutez la classe CSS
-
-  // Créez une icône Font Awesome
-  const editModeIcon = document.createElement("i");
-  editModeIcon.classList.add("fa-regular", "fa-pen-to-square", "edit-mode-icon"); // Ajoutez la classe CSS
-  editModeDiv.appendChild(editModeIcon);
-
-  // Créez un élément de texte
-  const editModeText = document.createElement("p");
-  editModeText.textContent = "Mode édition";
-  editModeText.classList.add("edit-mode-text"); // Ajoutez la classe CSS
-  editModeDiv.appendChild(editModeText);
-
-  // Insérez la div en haut de la page
-  document.body.insertBefore(editModeDiv, document.body.firstChild);
+  });
 }
-
-// Fonction pour supprimer la div en mode édition
-function removeEditModeDiv() {
-  const editModeDiv = document.querySelector(".edit-mode-div");
-  if (editModeDiv) {
-    editModeDiv.remove();
-  }
-}
-
 // Fonction pour créer le mode édition projet
-function createEditModeProjet() {
+export function createEditModeProjet() {
   // Sélectionnez le titre h2
   const title = document.querySelector("#portfolio h2");
 
@@ -188,7 +116,7 @@ function createEditModeProjet() {
 }
 
 // Fonction pour supprimer le mode édition projet
-function removeEditModeProjet() {
+export function removeEditModeProjet() {
   // Sélectionnez le titre en mode édition
   const titleContainer = document.querySelector("#portfolio .title-container");
 
@@ -198,50 +126,8 @@ function removeEditModeProjet() {
   }
 }
 
-// Gestion de la déconnexion
-function handleLogout() {
-  localStorage.removeItem("token");
-  localStorage.setItem("isLoggedIn", "false");
-  loginLink.textContent = "Log In";
-  removeEditModeDiv();
-  removeEditModeProjet();
-}
-
-// Vérifiez si l'utilisateur est connecté lors du chargement initial
-const isLoggedIn = localStorage.getItem("isLoggedIn");
-
-if (isLoggedIn === "true") {
-  document.getElementById("login-link").textContent = "Log Out";
-  createEditModeDiv();
-  createEditModeProjet();
-} else {
-  document.getElementById("login-link").textContent = "Log In";
-  removeEditModeDiv();
-  removeEditModeProjet();
-}
-
-const loginLink = document.getElementById("login-link");
-
-loginLink.addEventListener("click", (event) => {
-  event.preventDefault();
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-
-  if (isLoggedIn) {
-    handleLogout(); // Si l'utilisateur est connecté, déconnectez-le
-  } else {
-    window.location.href = "login.html"; // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-  }
-});
-
-function updateNavigation() {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  loginLink.textContent = isLoggedIn ? "Log Out" : "Log In";
-}
-
-updateNavigation();
-////////////////////////////////////////////////////////////////////////////////////////////
 // Fonction pour créer la modale
-function createModal(worksData) {
+export function createModal(worksData) {
   var modal = document.createElement("div");
   modal.setAttribute("id", "myModal");
   modal.classList.add("modal");
@@ -262,8 +148,11 @@ function createModal(worksData) {
     // Masquez le corps actuel de la modale
     const currentModalBody = document.querySelector(".modal-delete");
     const oldModalBody = document.querySelector(".modal-addpicture");
+    const backIcon = document.querySelector(".back-icon");
     oldModalBody.style.display = "none";
     currentModalBody.style.display = "flex";
+    // Rendez l'icône de retour visible
+    backIcon.classList.remove("visible");
   };
   modalHeader.appendChild(backIcon);
 
@@ -316,42 +205,9 @@ function createModalBody(worksData) {
 
   return modalBody;
 }
-// Fonction pour créer le conteneur d'images
-function createImagesContainer(worksData) {
-  var imagesContainer = document.createElement("div");
-  imagesContainer.classList.add("images-container");
 
-  if (worksData) {
-    worksData.forEach((work) => {
-      var imageWrapper = document.createElement("div");
-      imageWrapper.classList.add("modal-image-wrapper");
-
-      var img = document.createElement("img");
-      img.src = work.imageUrl;
-      img.alt = work.title;
-      img.classList.add("modal-image");
-
-      var deleteIconContainer = document.createElement("div");
-      deleteIconContainer.classList.add("delete-icon-container");
-
-      var deleteIcon = document.createElement("i");
-      deleteIcon.classList.add("fa-regular", "fa-trash-can");
-      deleteIcon.setAttribute("data-id", work.id);
-      deleteIcon.addEventListener("click", function () {
-        deleteWork(this.getAttribute("data-id"));
-      });
-
-      deleteIconContainer.appendChild(deleteIcon);
-      imageWrapper.appendChild(img);
-      imageWrapper.appendChild(deleteIconContainer);
-      imagesContainer.appendChild(imageWrapper);
-    });
-  }
-
-  return imagesContainer;
-}
 // Fonction pour créer le formulaire d'ajout d'image
-function createAddImageForm() {
+async function createAddImageForm() {
   // Masquez le corps actuel de la modale
   const currentModalBody = document.querySelector(".modal-delete");
   currentModalBody.style.display = "none";
@@ -465,15 +321,19 @@ function createAddImageForm() {
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(addImageModalBody);
 
-  // Appelez fetchCategories pour remplir la liste déroulante
-  fetchCategories((categories) => {
+  try {
+    const categorySelect = document.getElementById("category-select");
+    const categories = await fetchCategories();
+
     categories.forEach((category) => {
       const option = document.createElement("option");
       option.value = category.id;
       option.textContent = category.name;
       categorySelect.appendChild(option);
     });
-  });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des catégories :", error);
+  }
 
   // Création du bouton de soumission "Valider"
   var validateButtonContainer = createButtonContainer(
@@ -492,38 +352,8 @@ function createAddImageForm() {
   addImageModalBody.appendChild(validateButtonContainer);
 }
 
-// Fonction pour créer le conteneur de boutons avec personnalisation
-function createButtonContainer(buttonText, buttonClass, onClickFunction) {
-  var buttonContainer = document.createElement("div");
-  buttonContainer.classList.add("button-container");
-
-  var button = document.createElement("button");
-  button.textContent = buttonText;
-  button.classList.add(buttonClass);
-  button.addEventListener("click", onClickFunction); // Utilisation de la fonction de rappel fournie
-
-  buttonContainer.appendChild(button);
-
-  return buttonContainer;
-}
-
 // Fonction pour afficher la modale
-function showModal() {
+export function showModal() {
   var modal = document.getElementById("myModal") || createModal();
   modal.style.display = "flex";
-}
-
-// Lorsque l'utilisateur clique sur le bouton, appelez showModal()
-document.getElementById("update_projet").onclick = function () {
-  console.log("action sur update_projet");
-  // createModal();
-  createModal(worksData);
-  showModal();
-};
-
-// Fonction pour gérer la suppression d'un travail
-function deleteWork(workId) {
-  // Ici, tu pourrais appeler l'API pour supprimer le travail en utilisant workId
-  console.log("Supprimer le travail avec l'ID :", workId);
-  // Ajoute la logique d'appel API ici...
 }

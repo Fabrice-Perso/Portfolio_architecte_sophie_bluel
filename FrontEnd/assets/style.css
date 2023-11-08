@@ -380,26 +380,45 @@ span i {
   transform: translate(-50%, -50%);
   background-color: #fefefe;
   /* margin: 15% auto; 15% depuis le haut et centré horizontalement */
-  padding: 0 20px;
+  padding: 20px 20px;
   /* width: 45%; Largeur de la modale */
   border-radius: 10px;
   align-items: center;
 }
 
-.close {
-  color: #000;
-  float: right;
-  font-size: 1.5rem;
+/* CSS pour l'en-tête de la modale */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
 }
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
+.close {
+  font-size: 1.5rem; /* Assurez-vous que la taille de la police est la même */
   cursor: pointer;
 }
-.modal-body {
+
+/* Pour masquer la flèche tout en gardant son espace */
+.back-icon {
+  font-size: 1.2rem;
+  visibility: hidden; /* La flèche est masquée mais son espace est conservé */
+  cursor: pointer;
+}
+
+/* Lorsque la flèche doit être visible */
+.back-icon.visible {
+  visibility: visible;
+}
+
+.modal-delete {
   padding: 2.75rem 4rem 0rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.88rem;
+}
+.modal-addpicture {
+  padding: 0rem 4rem;
   display: flex;
   flex-direction: column;
   gap: 2.88rem;
@@ -432,26 +451,6 @@ span i {
   object-fit: cover; /* Cela garantira que les images couvrent l'espace alloué sans être déformées */
 }
 
-.button-container {
-  display: flex;
-  justify-content: center; /* Centre le bouton horizontalement */
-  padding: 2rem 0;
-  border-top: 0.0625rem solid #b3b3b3; /* Bordure en bas du conteneur */
-}
-
-.add-button {
-  font-weight: 700;
-  text-align: center;
-  flex-shrink: 0;
-  height: 2.3125rem;
-  border-radius: 3.75rem;
-  font-family: Syne;
-  font-size: 1rem;
-  padding: 0.56rem 2.56rem;
-  cursor: pointer;
-  color: white;
-  background-color: #1d6154;
-}
 /* Style pour le conteneur de l'image dans la modale */
 .modal-image-wrapper {
   position: relative; /* Permet le positionnement absolu des éléments enfants */
@@ -478,4 +477,141 @@ span i {
   font-size: 0.5625rem; /* Taille de l'icône */
   color: white; /* Couleur de l'icône */
   cursor: pointer; /* Changement du curseur pour indiquer une action */
+}
+/* Bouton du modal */
+.button-container {
+  display: flex;
+  justify-content: center; /* Centre le bouton horizontalement */
+  padding: 2rem 0;
+  border-top: 0.0625rem solid #b3b3b3; /* Bordure en bas du conteneur */
+}
+
+.add-button {
+  font-weight: 700;
+  text-align: center;
+  flex-shrink: 0;
+  height: 2.3125rem;
+  border-radius: 3.75rem;
+  font-family: Syne;
+  font-size: 1rem;
+  padding: 0.56rem 2.56rem;
+  cursor: pointer;
+  color: white;
+  background-color: #1d6154;
+}
+
+.btn-file {
+  border-radius: 3.125rem;
+  background: #cbd6dc;
+}
+
+.file-upload-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e8f1f6; /* Couleur de fond du conteneur */
+  border-radius: 0.1875rem;
+  width: 26.25rem;
+  height: 10.5625rem;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.file-upload-input {
+  opacity: 0; /* Rendre l'input file transparent pour qu'il ne soit pas visible */
+  position: absolute;
+  z-index: -1;
+}
+
+.fa-image {
+  font-size: 4.75rem; /* Taille de l'icône */
+  color: #b9c5cc;
+}
+
+.upload-text {
+  margin-top: 8px; /* Espace au-dessus du texte */
+  color: #306685;
+  text-align: center;
+  font-family: Work Sans;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border-radius: 3.125rem;
+  background: #cbd6dc;
+  width: 10.8125rem;
+  height: 2.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-format {
+  margin-top: 4px; /* Espace au-dessus du texte des formats de fichier */
+  color: #444;
+  text-align: center;
+  font-family: Work Sans;
+  font-size: 0.625rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+/* Style pour changer l'apparence du curseur lors du survol */
+.file-upload-container:hover {
+  background-color: #e9e9e9; /* Changement de couleur de fond au survol */
+}
+
+/* Style pour l'état actif du bouton de téléchargement */
+.file-upload-container:active {
+  background-color: #dcdcdc; /* Changement de couleur de fond lors du clic */
+}
+
+.form-control {
+  background: #fff;
+  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+  width: 26.25rem;
+  height: 3.1875rem;
+}
+
+.btn-valider {
+  padding: 0.56rem 2.56rem;
+  cursor: pointer;
+  color: white;
+  border-radius: 3.75rem;
+  background: #a7a7a7;
+  width: 14.8125rem;
+  height: 2.25rem;
+  color: #fff;
+  text-align: center;
+  font-family: Syne;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.image-preview-container {
+  width: 26.25rem;
+  height: 10.5625rem;
+  border-radius: 0.1875rem;
+  background: #e8f1f6;
+  /* width: 100%;
+  height: auto;  */
+  display: none;
+  justify-content: center; /* Centre l'image horizontalement */
+}
+
+.image-preview {
+  max-width: 100%; /* Assurez-vous que l'image ne dépasse pas le conteneur */
+  height: auto; /* Hauteur automatique pour maintenir l'aspect ratio */
+  border-radius: 10px; /* Pour les coins arrondis, si souhaité */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Un peu d'ombre pour un effet de profondeur */
 }
