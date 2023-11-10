@@ -1,7 +1,7 @@
 // events.js
 import { getWorksData } from "./store.js";
-import { createModal, showModal } from "./ui.js";
-// import { worksData } from "./data.js"; // Supposons que vous ayez un fichier data.js qui exporte worksData
+import { showModal } from "./ui.js";
+import { createModal } from "./modal.js";
 
 // Fonction pour créer la div en mode édition
 export function createEditModeDiv() {
@@ -39,6 +39,13 @@ function deleteWork(workId) {
   // Ajoute la logique d'appel API ici...
 }
 
+// Fonction pour gérer le work
+function addWork() {
+  // Ici, tu pourrais appeler l'API pour supprimer le travail en utilisant workId
+  console.log("Ajouter le travail");
+  // Ajoute la logique d'appel API ici...
+}
+
 export function setUpEventListeners() {
   const updateProjectButton = document.getElementById("update_projet");
   if (updateProjectButton) {
@@ -48,5 +55,22 @@ export function setUpEventListeners() {
       createModal(worksData); // Crée une modal avec les données récupérées
       showModal(); // Affiche la modal
     };
+  }
+}
+
+export function setupContactLink() {
+  const contactLink = document.getElementById("contact-link");
+  if (contactLink) {
+    contactLink.addEventListener("click", () => {
+      window.location.href = "index.html#contact"; // Cela redirigera vers la section de contact sur index.html
+    });
+  }
+}
+export function setupProjetLink() {
+  const projetLink = document.getElementById("projet-link");
+  if (projetLink) {
+    projetLink.addEventListener("click", () => {
+      window.location.href = "index.html#portfolio"; // Cela redirigera vers la section de portfolio sur index.html
+    });
   }
 }
