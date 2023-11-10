@@ -32,20 +32,6 @@ export function removeEditModeDiv() {
   }
 }
 
-// Fonction pour gérer la suppression d'un travail
-function deleteWork(workId) {
-  // Ici, tu pourrais appeler l'API pour supprimer le travail en utilisant workId
-  console.log("Supprimer le travail avec l'ID :", workId);
-  // Ajoute la logique d'appel API ici...
-}
-
-// Fonction pour gérer le work
-function addWork() {
-  // Ici, tu pourrais appeler l'API pour supprimer le travail en utilisant workId
-  console.log("Ajouter le travail");
-  // Ajoute la logique d'appel API ici...
-}
-
 export function setUpEventListeners() {
   const updateProjectButton = document.getElementById("update_projet");
   if (updateProjectButton) {

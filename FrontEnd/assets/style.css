@@ -142,12 +142,10 @@ header {
   display: flex;
   justify-content: space-between;
   margin: 50px 0;
-  width: 80%;
-  border: 2px solid black;
+  width: 90%;
 }
 main {
   width: 80%;
-  border: 2px solid black;
 }
 footer {
   display: flex;
@@ -209,6 +207,7 @@ li:hover {
 
 #introduction article {
   flex: 1;
+  padding-right: 20px;
 }
 #introduction h2 {
   margin-bottom: 1em;
@@ -222,11 +221,12 @@ li:hover {
   margin-bottom: 1em;
 }
 .gallery {
-  width: 100%;
+  width: 90%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-column-gap: 20px;
   grid-row-gap: 20px;
+  margin: auto;
 }
 
 .gallery img {
@@ -299,6 +299,7 @@ button {
   justify-content: center;
   gap: 0.62rem;
   padding: 2rem;
+  flex-wrap: wrap;
 }
 
 .button-filtre {
@@ -456,7 +457,7 @@ span i {
 }
 
 .modal-delete {
-  padding: 0rem 4rem 0rem;
+  padding: 0rem 4rem;
   display: flex;
   flex-direction: column;
 }
@@ -488,7 +489,7 @@ span i {
 
 .modal-image {
   /* flex: 0 0 calc(20%); Chaque image prendra 20% de l'espace disponible, moins 10px pour le padding */
-  width: 4rem;
+  width: 5rem;
   height: auto;
   object-fit: cover; /* Cela garantira que les images couvrent l'espace alloué sans être déformées */
 }
@@ -589,13 +590,13 @@ span i {
   color: #306685;
   text-align: center;
   font-family: Work Sans;
-  font-size: 0.875rem;
+  font-size: 0.675rem;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
   border-radius: 3.125rem;
   background: #cbd6dc;
-  width: 10.8125rem;
+  width: 17.8125rem;
   height: 2.25rem;
   display: flex;
   justify-content: center;
@@ -629,6 +630,7 @@ span i {
   display: none;
   justify-content: center; /* Centre l'image horizontalement */
   cursor: pointer;
+  position: relative;
 }
 
 .image-preview {
@@ -636,4 +638,46 @@ span i {
   width: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+}
+
+.delete-image-button {
+  position: absolute;
+  top: -9px;
+  right: 0px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.modal-content.success {
+  border: 2px solid green;
+}
+
+.modal-content.failure {
+  border: 2px solid red;
+}
+
+select {
+  padding-right: 5px; /* Ajustez cette valeur selon vos besoins */
+  border: none;
 }

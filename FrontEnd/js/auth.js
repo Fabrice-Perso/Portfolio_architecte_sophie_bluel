@@ -21,7 +21,7 @@ export async function handleLoginFormSubmit(event) {
 
     if (!response.ok) {
       console.error("Response not OK:", response);
-      throw new Error("Les informations d'identification sont incorrectes.");
+      throw new Error("Les informations d'identifications sont incorrectes.");
     }
 
     const data = await response.json();
@@ -35,14 +35,16 @@ export async function handleLoginFormSubmit(event) {
       // Mise à jour de la navigation et modification de l'UI sans appeler
       updateNavigation();
       console.log("Redirecting to home page"); // Pour le débogage
-      window.location.href = "index.html"; // Redirigez vers la page principale
+      showModal("Connexion réussie.", true, "index.html"); // Afficher le modal de succès
+      // window.location.href = "index.html"; // Redirigez vers la page principale
     } else {
       console.error("Token is missing in the response");
       throw new Error("Token manquant dans la réponse.");
     }
   } catch (error) {
     console.error("Erreur de connexion :", error);
-    alert(error.message); // Utilisez message pour une alerte plus spécifique
+    showModal("Échec de la connexion : " + error.message, false); // Afficher le modal d'échec
+    //alert(error.message); // Utilisez message pour une alerte plus spécifique
   }
 }
 
@@ -75,6 +77,8 @@ function handleLogout() {
   loginLink.textContent = "Log In";
   removeEditModeDiv();
   removeEditModeProjet();
+
+  showModal("Déconnexion réussie.", true); // Afficher le modal de déconnexion
 }
 
 // Ceci pourrait être dans votre fonction d'initialisation ou chargé après que le DOM est prêt
@@ -91,4 +95,32 @@ export function setupLoginLink() {
       window.location.href = "login.html"; // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
     }
   });
+}
+
+function showModal(message, isSuccess, redirectUrl) {
+  // Créer les éléments du modal
+  const modal = document.createElement("div");
+  const modalContent = document.createElement("div");
+  const modalText = document.createElement("p");
+  const okButton = document.createElement("button");
+
+  // Configuration des éléments
+  modal.className = "modal-login";
+  modalContent.className = isSuccess ? "modal-content success" : "modal-content failure";
+  modalText.textContent = message;
+  okButton.textContent = "OK";
+  okButton.onclick = () => {
+    modal.remove();
+    if (redirectUrl) {
+      window.location.href = redirectUrl; // Redirige vers l'URL spécifiée
+    }
+  };
+
+  // Assembler le modal
+  modalContent.appendChild(modalText);
+  modalContent.appendChild(okButton);
+  modal.appendChild(modalContent);
+
+  // Ajouter le modal au body
+  document.body.appendChild(modal);
 }
