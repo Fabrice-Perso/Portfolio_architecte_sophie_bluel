@@ -273,8 +273,9 @@ async function createAddImageForm_DragDrop() {
   try {
     const categories = await fetchCategories();
     const emptyOption = document.createElement("option");
-    emptyOption.textContent = "";
+    emptyOption.textContent = "Sélectionnez une Catégorie";
     emptyOption.value = "";
+    emptyOption.selected = true; // choix par défaut
     categorySelect.appendChild(emptyOption);
 
     categories.forEach((category) => {
