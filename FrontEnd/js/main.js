@@ -10,9 +10,7 @@ import { setupProjetLink } from "./events.js";
 
 async function initializeApp() {
   try {
-    const works = await fetchWorks();
-    setWorksData(works); // Stockez les données de works dans le store
-    displayWorks(works); // Mettez à jour l'UI avec les travaux récupérés
+    refreshWorks();
 
     const categoriesData = await fetchCategories();
     displayCategories(categoriesData); // Mettez à jour l'UI avec les catégories récupérées
@@ -29,3 +27,17 @@ async function initializeApp() {
 }
 
 initializeApp();
+export async function refreshWorks() {
+  try {
+    const works = await fetchWorks();
+    setWorksData(works); // Stockez les données de works dans le store
+    displayWorks(works); // Mettez à jour l'UI avec les travaux récupérés
+  } catch (error) {
+    console.error("Erreur lors du rafraîchissement des travaux et des catégories :", error);
+  }
+}
+
+// ...
+
+// Puis, après une opération d'ajout ou de suppression réussie, appelez :
+refreshWorks();

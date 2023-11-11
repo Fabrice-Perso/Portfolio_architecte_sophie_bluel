@@ -1,81 +1,83 @@
 import { getWorksData } from "./store.js";
-import { fetchCategories } from "./api.js";
 
 // Fonction pour afficher les travaux
 export function displayWorks(works) {
   const gallery = document.querySelector(".gallery");
-  gallery.innerHTML = ""; // Réinitialisez la galerie à chaque appel
+  if (gallery) {
+    gallery.innerHTML = ""; // Réinitialisez la galerie à chaque appel
 
-  works.forEach((work) => {
-    const figure = document.createElement("figure");
-    const img = document.createElement("img");
-    const figcaption = document.createElement("figcaption");
+    works.forEach((work) => {
+      const figure = document.createElement("figure");
+      const img = document.createElement("img");
+      const figcaption = document.createElement("figcaption");
 
-    img.src = work.imageUrl;
-    img.alt = work.title;
-    figcaption.textContent = work.title;
+      img.src = work.imageUrl;
+      img.alt = work.title;
+      figcaption.textContent = work.title;
 
-    figure.appendChild(img);
-    figure.appendChild(figcaption);
-    gallery.appendChild(figure);
-  });
+      figure.appendChild(img);
+      figure.appendChild(figcaption);
+      gallery.appendChild(figure);
+    });
 
-  console.log("Données récupérées et affichées avec succès :", works);
+    console.log("Données récupérées et affichées avec succès :", works);
+  }
 }
 
 // Fonction pour afficher les catégories
 export function displayCategories(categories) {
   console.log("function displayCategories Lue");
   const categoryButtons = document.querySelector("#category-buttons");
+  if (categoryButtons) {
+    // Créez un bouton "Tous" pour afficher tous les travaux
+    const allButton = document.createElement("button");
+    allButton.id = "btn-all";
+    allButton.textContent = "Tous";
+    allButton.classList.add("button-filtre", "active"); // Ajoutez les classes "button-filtre" et "active"
 
-  // Créez un bouton "Tous" pour afficher tous les travaux
-  const allButton = document.createElement("button");
-  allButton.id = "btn-all";
-  allButton.textContent = "Tous";
-  allButton.classList.add("button-filtre", "active"); // Ajoutez les classes "button-filtre" et "active"
+    // Ajoutez le bouton "Tous" au conteneur des boutons de catégorie
+    categoryButtons.appendChild(allButton);
 
-  // Ajoutez le bouton "Tous" au conteneur des boutons de catégorie
-  categoryButtons.appendChild(allButton);
+    // Générez les boutons de catégorie comme vous l'avez fait précédemment
+    categories.forEach((category) => {
+      const button = document.createElement("button");
+      const categoryId = `btn-${category.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}`;
+      button.id = categoryId;
+      button.textContent = category.name;
+      button.classList.add("button-filtre"); // Ajoutez la classe "button-filtre" aux autres boutons
 
-  // Générez les boutons de catégorie comme vous l'avez fait précédemment
-  categories.forEach((category) => {
-    const button = document.createElement("button");
-    const categoryId = `btn-${category.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}`;
-    button.id = categoryId;
-    button.textContent = category.name;
-    button.classList.add("button-filtre"); // Ajoutez la classe "button-filtre" aux autres boutons
+      categoryButtons.appendChild(button);
+    });
 
-    categoryButtons.appendChild(button);
-  });
+    // Sélectionnez l'élément contenant les boutons de filtre (categoryButtons)
+    categoryButtons.addEventListener("click", function (event) {
+      // Vérifiez si l'élément cliqué (event.target) est un bouton avec la classe "button-filtre"
+      if (event.target.classList.contains("button-filtre")) {
+        // Supprimez la classe "active" de tous les boutons de filtre
+        document.querySelectorAll(".button-filtre").forEach(function (btn) {
+          btn.classList.remove("active");
+        });
+        // Ajoutez la classe "active" au bouton cliqué
+        event.target.classList.add("active");
 
-  // Sélectionnez l'élément contenant les boutons de filtre (categoryButtons)
-  categoryButtons.addEventListener("click", function (event) {
-    // Vérifiez si l'élément cliqué (event.target) est un bouton avec la classe "button-filtre"
-    if (event.target.classList.contains("button-filtre")) {
-      // Supprimez la classe "active" de tous les boutons de filtre
-      document.querySelectorAll(".button-filtre").forEach(function (btn) {
-        btn.classList.remove("active");
-      });
-      // Ajoutez la classe "active" au bouton cliqué
-      event.target.classList.add("active");
+        // Récupérez la catégorie correspondante à partir de l'ID du bouton
+        const buttonId = event.target.id;
+        const category = categories.find((cat) => `btn-${cat.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}` === buttonId);
 
-      // Récupérez la catégorie correspondante à partir de l'ID du bouton
-      const buttonId = event.target.id;
-      const category = categories.find((cat) => `btn-${cat.name.replace(/&/g, "").replace(/\s+/g, "-").toLowerCase()}` === buttonId);
-
-      const works = getWorksData(); // Récupérez worksData depuis le store
-      // Si une catégorie correspondante est trouvée
-      if (category) {
-        // Filtrez les travaux par la catégorie correspondante
-        const filteredWorks = works.filter((work) => work.category.name === category.name);
-        // Appelez la fonction displayWorks pour afficher les travaux filtrés
-        displayWorks(filteredWorks);
-      } else if (buttonId === "btn-all") {
-        // Si le bouton "Tous" est cliqué, affichez tous les travaux
-        displayWorks(works);
+        const works = getWorksData(); // Récupérez worksData depuis le store
+        // Si une catégorie correspondante est trouvée
+        if (category) {
+          // Filtrez les travaux par la catégorie correspondante
+          const filteredWorks = works.filter((work) => work.category.name === category.name);
+          // Appelez la fonction displayWorks pour afficher les travaux filtrés
+          displayWorks(filteredWorks);
+        } else if (buttonId === "btn-all") {
+          // Si le bouton "Tous" est cliqué, affichez tous les travaux
+          displayWorks(works);
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 // Fonction pour créer le mode édition projet

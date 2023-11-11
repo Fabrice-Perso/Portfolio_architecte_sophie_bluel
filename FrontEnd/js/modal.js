@@ -1,4 +1,5 @@
-import { createButtonContainer, createImagesContainer, deleteWork } from "./utils.js";
+import { handleFormSubmit, handleFileSelect, fileDropped } from "./utils.js";
+import { deleteWork } from "./utils.js";
 import { fetchCategories } from "./api.js";
 
 // Fonction pour créer la modale
@@ -34,7 +35,7 @@ export function createModal(worksData) {
 
   // Créez le bouton de fermeture et ajoutez-le au conteneur d'en-tête
   var closeBtn = document.createElement("span");
-  closeBtn.classList.add("close");
+  closeBtn.classList.add("close-btn");
   closeBtn.innerHTML = "&times;";
   closeBtn.setAttribute("title", "Fermer");
   closeBtn.onclick = function () {
@@ -47,7 +48,7 @@ export function createModal(worksData) {
   modalContent.appendChild(modalHeader);
 
   // Continuez avec le corps de la modale comme avant
-  var modalBody = createModalBody(worksData);
+  var modalBody = createModalDelete(worksData);
   modalContent.appendChild(modalBody);
 
   // Ajoutez le modal-content au modal
@@ -63,8 +64,8 @@ export function createModal(worksData) {
   };
 }
 
-// Fonction pour créer le corps de la modale
-function createModalBody(worksData) {
+// Fonction pour créer la div de suppression (Par défaut)
+function createModalDelete(worksData) {
   var modalBody = document.createElement("div");
   modalBody.classList.add("modal-delete");
 
@@ -86,195 +87,55 @@ function createModalBody(worksData) {
   return modalBody;
 }
 
-// Fonction pour créer le formulaire d'ajout d'image
-async function createAddImageForm() {
-  // Masquez le corps actuel de la modale
-  const currentModalBody = document.querySelector(".modal-delete");
-  currentModalBody.style.display = "none";
+// Fonction pour créer le conteneur d'images
+function createImagesContainer(worksData) {
+  var imagesContainer = document.createElement("div");
+  imagesContainer.classList.add("images-container");
 
-  // Rendez l'icône de retour visible
-  const backIcon = document.querySelector(".back-icon");
-  backIcon.classList.add("visible");
+  if (worksData) {
+    worksData.forEach((work) => {
+      var imageWrapper = document.createElement("div");
+      imageWrapper.classList.add("modal-image-wrapper");
 
-  // Créez le nouveau corps de la modale pour le formulaire d'ajout
-  const addImageModalBody = document.createElement("div");
-  addImageModalBody.classList.add("modal-addpicture");
-  addImageModalBody.style.display = "flex"; // Utilisez flex pour les éléments internes
+      var img = document.createElement("img");
+      img.src = work.imageUrl;
+      img.alt = work.title;
+      img.classList.add("modal-image");
 
-  // Ajoutez un titre à la modale d'ajout de photo
-  var modalTitle = document.createElement("h2");
-  modalTitle.textContent = "Ajout photo";
-  modalTitle.classList.add("modal-title");
-  addImageModalBody.appendChild(modalTitle);
+      var deleteIconContainer = document.createElement("div");
+      deleteIconContainer.classList.add("delete-icon-container");
 
-  // Créez un élément de formulaire
-  const form = document.createElement("form");
-  form.setAttribute("method", "post");
-  form.setAttribute("enctype", "multipart/form-data");
+      var deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("fa-regular", "fa-trash-can");
+      deleteIcon.setAttribute("title", "Supprimer le travail");
+      deleteIcon.setAttribute("data-id", work.id);
+      deleteIcon.addEventListener("click", function () {
+        deleteWork(this.getAttribute("data-id"));
+      });
 
-  // Conteneur pour le téléchargement de fichier
-  const fileUploadContainer = document.createElement("div");
-  fileUploadContainer.classList.add("file-upload-container");
-  fileUploadContainer.setAttribute("title", "Glissez-Déposez ici votre image");
+      deleteIconContainer.appendChild(deleteIcon);
+      imageWrapper.appendChild(img);
+      imageWrapper.appendChild(deleteIconContainer);
+      imagesContainer.appendChild(imageWrapper);
+    });
+  }
 
-  const fileUploadLabel = document.createElement("label");
-  fileUploadLabel.classList.add("file-upload-label");
+  return imagesContainer;
+}
 
-  const fileIcon = document.createElement("i");
-  fileIcon.classList.add("fa-regular", "fa-image");
-
-  const uploadText = document.createElement("span");
-  uploadText.classList.add("upload-text");
-  uploadText.textContent = "+ Ajouter photo";
-
-  const fileFormat = document.createElement("span");
-  fileFormat.classList.add("file-format");
-  fileFormat.textContent = "jpg, png · 4mo max";
-
-  // Input de type file pour le bouton de téléchargement
-  const fileInput = document.createElement("input");
-  fileInput.type = "file";
-  fileInput.id = "file-upload";
-  fileInput.accept = ".jpg,.jpeg,.png";
-  fileInput.classList.add("file-upload-input");
-  fileInput.style.opacity = "0";
-
-  fileUploadLabel.appendChild(fileIcon);
-  fileUploadLabel.appendChild(uploadText);
-  fileUploadLabel.appendChild(fileInput);
-  fileUploadLabel.appendChild(fileFormat);
-
-  fileUploadContainer.appendChild(fileUploadLabel);
-
-  // Créez un élément où la prévisualisation de l'image sera affichée
-  const imagePreviewContainer = document.createElement("div");
-  imagePreviewContainer.classList.add("image-preview-container");
-  fileUploadContainer.appendChild(imagePreviewContainer);
-
-  form.appendChild(fileUploadContainer); // Ajoutez le conteneur de téléchargement de fichier au formulaire
-
-  // Ajoutez une croix pour supprimer l'image prévisualisée
-  const deleteImageButton = document.createElement("button");
-  deleteImageButton.innerHTML = "&times;"; // Utilisez une entité HTML pour la croix ou vous pouvez utiliser une icône
-  deleteImageButton.classList.add("delete-image-button");
-  deleteImageButton.setAttribute("title", "Supprimer l'image");
-  deleteImageButton.onclick = function () {
-    // Effacez l'image prévisualisée et réinitialisez le formulaire
-    imagePreviewContainer.innerHTML = "";
-    fileUploadLabel.style.display = "flex";
-    fileInput.value = ""; // Important pour pouvoir supprimer une image et en sélectionner une autre
-    imagePreviewContainer.style.display = "none";
-  };
-
-  // Créez le champ de saisie pour le titre
-  const titleLabel = document.createElement("label");
-  titleLabel.setAttribute("for", "titre"); // Associez le label à l'input via l'attribut 'for'
-  titleLabel.textContent = "Titre";
-  const titleInput = document.createElement("input");
-  titleInput.setAttribute("type", "text");
-  titleInput.setAttribute("id", "titre"); // Assurez-vous que l'id correspond à l'attribut 'for' du label
-  titleInput.setAttribute("name", "titre"); // Nom du champ pour la soumission du formulaire
-  titleInput.classList.add("form-control");
-  form.appendChild(titleLabel);
-  form.appendChild(titleInput);
-
-  // Créez la liste déroulante pour les catégories
-  const categoryLabel = document.createElement("label");
-  categoryLabel.setAttribute("for", "categorie"); // Associez le label au select via l'attribut 'for'
-  categoryLabel.textContent = "Catégorie";
-  const categorySelect = document.createElement("select");
-  categorySelect.setAttribute("id", "categorie"); // Assurez-vous que l'id correspond à l'attribut 'for' du label
-  categorySelect.setAttribute("name", "categorie"); // Nom du champ pour la soumission du formulaire
-  categorySelect.classList.add("form-control");
-  form.appendChild(categoryLabel);
-  form.appendChild(categorySelect);
-
-  // Créez un conteneur pour le bouton qui va être utilisé pour appliquer le flex
-  const buttonContainer = document.createElement("div");
+// Fonction pour créer le conteneur de boutons avec personnalisation
+function createButtonContainer(buttonText, buttonClass, onClickFunction) {
+  var buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
 
-  // Créez le bouton et ajoutez-le au conteneur
-  const submitButton = document.createElement("button");
-  submitButton.type = "submit";
-  submitButton.classList.add("btn-modal", "btn-valider");
-  submitButton.textContent = "Valider"; // Utilisez textContent au lieu de value
-  buttonContainer.appendChild(submitButton);
+  var button = document.createElement("button");
+  button.textContent = buttonText;
+  button.classList.add(buttonClass);
+  button.addEventListener("click", onClickFunction); // Utilisation de la fonction de rappel fournie
 
-  // Ajoutez le conteneur de bouton au formulaire
-  form.appendChild(buttonContainer);
+  buttonContainer.appendChild(button);
 
-  // Ajoutez le formulaire au corps de la modale
-  addImageModalBody.appendChild(form);
-
-  // Ajoutez le nouveau corps de la modale au contenu de la modale
-  const modalContent = document.querySelector(".modal-content");
-  modalContent.appendChild(addImageModalBody);
-
-  // Logique pour afficher la prévisualisation de l'image sélectionnée
-  fileInput.addEventListener("change", function (event) {
-    // Assurez-vous qu'un fichier a été sélectionné
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-
-      // Vérifiez si le fichier est de type JPEG ou PNG
-      if (["image/jpeg", "image/png"].includes(file.type)) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          // Affichage du bloc prévisualisation
-          imagePreviewContainer.innerHTML = "";
-          imagePreviewContainer.style.display = "flex";
-
-          // Créez et ajoutez l'image à la prévisualisation
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          img.classList.add("image-preview");
-          imagePreviewContainer.appendChild(img);
-
-          // Changez les styles pour l'affichage
-          fileUploadLabel.style.display = "none"; // Cachez le label de téléchargement de fichier
-        };
-
-        // Lisez le fichier sélectionné
-        reader.readAsDataURL(file);
-      } else {
-        // Affichez un message si le fichier n'est pas une image JPEG ou PNG
-        console.log("Le fichier sélectionné n'est pas une image JPEG ou PNG.");
-      }
-    } else {
-      // Débogage : Aucun fichier sélectionné
-      console.log("Aucun fichier sélectionné pour la prévisualisation");
-    }
-  });
-
-  // Remplissez la liste déroulante des catégories
-  try {
-    const categories = await fetchCategories();
-
-    // Créez et ajoutez une option vide au début de la liste déroulante
-    const emptyOption = document.createElement("option");
-    emptyOption.textContent = ""; // Texte vide pour l'option vide
-    emptyOption.value = ""; // Valeur vide pour l'option vide
-    categorySelect.appendChild(emptyOption);
-
-    // Ensuite, ajoutez les autres options à partir des catégories récupérées
-    categories.forEach((category) => {
-      const option = document.createElement("option");
-      option.value = category.id;
-      option.textContent = category.name;
-      categorySelect.appendChild(option);
-    });
-  } catch (error) {
-    console.error("Erreur lors de la récupération des catégories :", error);
-  }
-  // Gérez la soumission du formulaire
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    // Ici, ajoutez votre logique de soumission du formulaire
-    // Utilisez FormData et fetch() pour envoyer les données
-    const formData = new FormData(form);
-    // ... (Logique de fetch pour envoyer formData)
-  });
+  return buttonContainer;
 }
 
 // Fonction pour créer le formulaire d'ajout d'image Drag & Drop
@@ -302,20 +163,11 @@ async function createAddImageForm_DragDrop() {
   const form = document.createElement("form");
   form.setAttribute("method", "post");
   form.setAttribute("enctype", "multipart/form-data");
+  form.id = "add-form";
 
   // Conteneur pour le téléchargement de fichier avec drag & drop
   const fileUploadContainer = document.createElement("div");
   fileUploadContainer.classList.add("file-upload-container");
-
-  // Écouteur d'événements pour drag & drop
-  fileUploadContainer.addEventListener("dragover", (event) => {
-    event.preventDefault();
-  });
-
-  fileUploadContainer.addEventListener("drop", (event) => {
-    event.preventDefault();
-    fileDropped(event);
-  });
 
   const fileUploadLabel = document.createElement("label");
   fileUploadLabel.classList.add("file-upload-label");
@@ -335,10 +187,14 @@ async function createAddImageForm_DragDrop() {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.id = "file-upload";
+  fileInput.name = "file-upload";
   fileInput.accept = ".jpg,.jpeg,.png";
   fileInput.classList.add("file-upload-input");
+  fileInput.setAttribute("required", ""); // Ajouter l'attribut required
   fileInput.style.opacity = "0";
-  fileInput.addEventListener("change", handleFileSelect);
+  fileInput.addEventListener("change", (event) => {
+    handleFileSelect(event, fileInput, imagePreviewContainer, deleteImageButton, fileUploadLabel);
+  });
 
   fileUploadLabel.appendChild(fileIcon);
   fileUploadLabel.appendChild(uploadText);
@@ -376,6 +232,7 @@ async function createAddImageForm_DragDrop() {
   titleInput.setAttribute("id", "titre"); // Assurez-vous que l'id correspond à l'attribut 'for' du label
   titleInput.setAttribute("name", "titre"); // Nom du champ pour la soumission du formulaire
   titleInput.classList.add("form-control");
+  titleInput.setAttribute("required", ""); // Ajouter l'attribut required
   form.appendChild(titleLabel);
   form.appendChild(titleInput);
 
@@ -387,6 +244,7 @@ async function createAddImageForm_DragDrop() {
   categorySelect.setAttribute("id", "categorie"); // Assurez-vous que l'id correspond à l'attribut 'for' du label
   categorySelect.setAttribute("name", "categorie"); // Nom du champ pour la soumission du formulaire
   categorySelect.classList.add("form-control");
+  categorySelect.setAttribute("required", ""); // Ajouter l'attribut required
   form.appendChild(categoryLabel);
   form.appendChild(categorySelect);
 
@@ -410,42 +268,6 @@ async function createAddImageForm_DragDrop() {
   // Ajoutez le nouveau corps de la modale au contenu de la modale
   const modalContent = document.querySelector(".modal-content");
   modalContent.appendChild(addImageModalBody);
-
-  // Fonction pour gérer les fichiers sélectionnés ou déposés
-  function handleFileSelect(event) {
-    const files = event.target.files || event.dataTransfer.files;
-    if (files.length === 1 && ["image/jpeg", "image/png"].includes(files[0].type)) {
-      fileInput.files = files;
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        // Affichage du bloc prévisualisation
-        imagePreviewContainer.innerHTML = "";
-        imagePreviewContainer.style.display = "flex";
-
-        // Créez et ajoutez l'image à la prévisualisation
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        img.classList.add("image-preview");
-        imagePreviewContainer.appendChild(img);
-
-        // Ajoutez le bouton de suppression maintenant que l'image est chargée
-        imagePreviewContainer.appendChild(deleteImageButton);
-
-        // Changez les styles pour l'affichage
-        fileUploadLabel.style.display = "none"; // Cachez le label de téléchargement de fichier
-      };
-      if (files.length > 0) {
-        reader.readAsDataURL(files[0]);
-      }
-    } else {
-      alert("Veuillez sélectionner une seule image de type JPEG ou PNG.");
-    }
-  }
-
-  // Fonction pour gérer les fichiers déposés par drag & drop
-  function fileDropped(event) {
-    handleFileSelect(event);
-  }
 
   // Logique pour remplir la liste déroulante des catégories
   try {
@@ -475,19 +297,41 @@ async function createAddImageForm_DragDrop() {
     fileUploadContainer.classList.remove("hover"); // Enlever la classe pour le retour visuel lorsqu'on quitte la zone de survol
   });
 
+  // Écouteur d'événements pour drag & drop
+  fileUploadContainer.addEventListener("dragover", (event) => {
+    event.preventDefault();
+  });
+
+  // Assurez-vous que fileInput est bien défini ici
+  console.log("setup fileInput:", fileInput); // Ceci devrait afficher l'élément input
+
   fileUploadContainer.addEventListener("drop", (event) => {
     event.preventDefault();
-    fileUploadContainer.classList.remove("hover"); // Enlever la classe pour le retour visuel lors du drop
-    fileDropped(event);
+    fileUploadContainer.classList.remove("hover");
+    // Assurez-vous de passer tous les arguments requis à fileDropped.
+    fileDropped(event, fileInput, imagePreviewContainer, deleteImageButton, fileUploadLabel);
   });
 
-  // Gérez la soumission du formulaire
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  // Ajouter un écouteur d'événements pour la soumission du formulaire
+  form.addEventListener("submit", (event) => handleFormSubmit(event, fileInput, titleInput, categorySelect));
 
-    // Ici, ajoutez votre logique de soumission du formulaire
-    // Utilisez FormData et fetch() pour envoyer les données
-    const formData = new FormData(form);
-    // ... (Logique de fetch pour envoyer formData)
-  });
+  // Ajoutez des écouteurs d'événements sur les champs de saisie
+  titleInput.addEventListener("input", () => checkFieldsAndAdjustButton(titleInput, categorySelect, fileInput, submitButton));
+  categorySelect.addEventListener("change", () => checkFieldsAndAdjustButton(titleInput, categorySelect, fileInput, submitButton));
+  fileInput.addEventListener("change", () => checkFieldsAndAdjustButton(titleInput, categorySelect, fileInput, submitButton));
+
+  // Appel initial pour définir l'état correct du bouton lors du chargement initial
+  checkFieldsAndAdjustButton(titleInput, categorySelect, fileInput, submitButton);
+}
+// Fonction pour vérifier si tous les champs sont valides
+function checkFieldsAndAdjustButton(titleInput, categorySelect, fileInput, submitButton) {
+  if (titleInput.checkValidity() && categorySelect.checkValidity() && fileInput.files.length > 0) {
+    // Si tous les champs sont valides, enlevez la classe 'btn-valider'
+    submitButton.classList.remove("btn-valider");
+  } else {
+    // Si tous les champs ne sont pas valides, ajoutez la classe 'btn-valider'
+    if (!submitButton.classList.contains("btn-valider")) {
+      submitButton.classList.add("btn-valider");
+    }
+  }
 }
