@@ -7,9 +7,9 @@ import { setupProjetLink } from "./events.js"; // Importation de la fonction de 
 
 // Affichage d'un message pour indiquer si les logs de débogage sont activés ou non en fonction du mode de production
 if (isProduction) {
-  console.log("Mode Production : Console.log désactivé");
+  console.log("Mode Production login.js : Console.log désactivé");
 } else {
-  console.log("Mode Production : Console.log activé");
+  console.log("Mode Développement login.js : Console.log activé");
 }
 
 /**

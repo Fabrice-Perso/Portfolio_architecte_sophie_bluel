@@ -67,7 +67,7 @@ export async function handleLoginFormSubmit(event) {
  * Elle met également à jour la navigation pour refléter l'état de connexion.
  */
 export function checkLoginState() {
-  if (!isProduction) console.log("fonction checkLoginState lue");
+  if (!isProduction) console.log("Fonction checkLoginState lue");
 
   // Met à jour les éléments de navigation pour refléter l'état de connexion
   updateNavigation();
@@ -94,7 +94,7 @@ export function checkLoginState() {
  * sinon il affichera "Log In". Ceci est déterminé par la valeur de 'isLoggedIn' dans localStorage.
  */
 function updateNavigation() {
-  if (!isProduction) console.log("fonction updateNavigation lue");
+  if (!isProduction) console.log("Fonction updateNavigation lue");
 
   // Récupère l'état de connexion à partir de localStorage
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -114,7 +114,7 @@ function updateNavigation() {
  * Enfin, elle affiche un modal indiquant que la déconnexion a été réussie.
  */
 function handleLogout() {
-  if (!isProduction) console.log("fonction handleLogout lue");
+  if (!isProduction) console.log("Fonction handleLogout lue");
 
   // Supprime le token du localStorage, effaçant ainsi la session de l'utilisateur
   localStorage.removeItem("token");
@@ -142,7 +142,7 @@ function handleLogout() {
  * la connexion et la déconnexion en fonction de l'état actuel de l'utilisateur.
  */
 export function setupLoginLink() {
-  if (!isProduction) console.log("fonction setupLoginLink lue");
+  if (!isProduction) console.log("Fonction setupLoginLink lue");
 
   // Récupère l'élément du DOM pour le lien de connexion
   const loginLink = document.getElementById("login-link");
@@ -174,6 +174,7 @@ export function setupLoginLink() {
  * @param {string} [redirectUrl] - L'URL de redirection après la fermeture du modal (facultatif).
  */
 function showModal(message, isSuccess, redirectUrl) {
+  if (!isProduction) console.log("Fonction showModal");
   // Crée et configure les éléments du modal
   const modal = document.createElement("div");
   const modalContent = document.createElement("div");
@@ -209,6 +210,7 @@ function showModal(message, isSuccess, redirectUrl) {
 
   // Fonction pour gérer la fermeture du modal et la redirection si nécessaire
   function handleModalClose() {
+    if (!isProduction) console.log("Fonction handleModalClose");
     // Retire le modal de la page
     modal.remove();
     // Redirige l'utilisateur si une URL de redirection a été fournie

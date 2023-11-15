@@ -1,62 +1,77 @@
 // events.js
-import { getWorksData } from "./store.js";
-import { showModal } from "./ui.js";
-import { createModal } from "./modal.js";
+import { isProduction } from "./config.js";
+import { getWorksData } from "./store.js"; // Importe la fonction pour obtenir les données stockées
+import { showModal } from "./ui.js"; // Importe la fonction pour afficher un modal
+import { createModal } from "./modal.js"; // Importe la fonction pour créer un modal
 
-// Fonction pour créer la div en mode édition
+/**
+ * Crée et ajoute une div indiquant le mode édition au début du corps de la page.
+ */
 export function createEditModeDiv() {
-  // Créez la div en mode édition
+  if (!isProduction) console.log("Fonction createEditModeDiv");
   const editModeDiv = document.createElement("div");
-  editModeDiv.classList.add("edit-mode-div"); // Ajoutez la classe CSS
+  editModeDiv.classList.add("edit-mode-div");
 
-  // Créez une icône Font Awesome
   const editModeIcon = document.createElement("i");
-  editModeIcon.classList.add("fa-regular", "fa-pen-to-square", "edit-mode-icon"); // Ajoutez la classe CSS
+  editModeIcon.classList.add("fa-regular", "fa-pen-to-square", "edit-mode-icon");
   editModeDiv.appendChild(editModeIcon);
 
-  // Créez un élément de texte
   const editModeText = document.createElement("p");
   editModeText.textContent = "Mode édition";
-  editModeText.classList.add("edit-mode-text"); // Ajoutez la classe CSS
+  editModeText.classList.add("edit-mode-text");
   editModeDiv.appendChild(editModeText);
 
-  // Insérez la div en haut de la page
-  document.body.insertBefore(editModeDiv, document.body.firstChild);
+  document.body.insertBefore(editModeDiv, document.body.firstChild); // Insère la div en mode édition en haut de la page
 }
 
-// Fonction pour supprimer la div en mode édition
+/**
+ * Supprime la div du mode édition du corps de la page, si elle existe.
+ */
 export function removeEditModeDiv() {
+  if (!isProduction) console.log("Fonction removeEditModeDiv");
   const editModeDiv = document.querySelector(".edit-mode-div");
   if (editModeDiv) {
-    editModeDiv.remove();
+    editModeDiv.remove(); // Retire la div du mode édition
   }
 }
 
+/**
+ * Configure les écouteurs d'événements pour les actions de l'interface utilisateur, comme la mise à jour des projets.
+ */
 export function setUpEventListeners() {
+  if (!isProduction) console.log("Fonction setUpEventListeners");
   const updateProjectButton = document.getElementById("update_projet");
   if (updateProjectButton) {
     updateProjectButton.onclick = function () {
-      console.log("action sur update_projet");
-      const worksData = getWorksData(); // Récupère les données de travaux
-      createModal(worksData); // Crée une modal avec les données récupérées
-      showModal(); // Affiche la modal
+      const worksData = getWorksData(); // Récupère les données des " Work "  stockées
+      createModal(worksData); // Crée un modal pour la mise à jour des projets avec les données récupérées
+      showModal(); // Affiche le modal
     };
   }
 }
 
+/**
+ * Configure le lien de contact pour rediriger vers la section contact de la page principale.
+ */
 export function setupContactLink() {
+  if (!isProduction) console.log("Fonction setupContactLink");
   const contactLink = document.getElementById("contact-link");
   if (contactLink) {
     contactLink.addEventListener("click", () => {
-      window.location.href = "index.html#contact"; // Cela redirigera vers la section de contact sur index.html
+      window.location.href = "index.html#contact"; // Redirige vers la section de contact
     });
   }
 }
+
+/**
+ * Configure le lien de projet pour rediriger vers la section portfolio de la page principale.
+ */
 export function setupProjetLink() {
+  if (!isProduction) console.log("Fonction setupProjetLink");
   const projetLink = document.getElementById("projet-link");
   if (projetLink) {
     projetLink.addEventListener("click", () => {
-      window.location.href = "index.html#portfolio"; // Cela redirigera vers la section de portfolio sur index.html
+      window.location.href = "index.html#portfolio"; // Redirige vers la section de portfolio
     });
   }
 }

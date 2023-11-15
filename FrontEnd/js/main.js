@@ -1,51 +1,69 @@
 // main.js
 import { isProduction } from "./config.js";
-import { fetchWorks, fetchCategories } from "./api.js";
-import { setWorksData } from "./store.js";
-import { displayWorks, displayCategories } from "./ui.js";
-import { setupLoginLink } from "./auth.js";
-import { checkLoginState } from "./auth.js";
-import { setUpEventListeners } from "./events.js";
-import { setupContactLink } from "./events.js";
-import { setupProjetLink } from "./events.js";
+import { fetchWorks, fetchCategories } from "./api.js"; // Importe les fonctions API pour récupérer les données
+import { setWorksData } from "./store.js"; // Importe la fonction pour stocker les données des travaux
+import { displayWorks, displayCategories } from "./ui.js"; // Importe les fonctions pour afficher les données dans l'UI
+import { setupLoginLink } from "./auth.js"; // Importe la fonction pour configurer le lien de connexion/déconnexion
+import { checkLoginState } from "./auth.js"; // Importe la fonction pour vérifier l'état de connexion
+import { setUpEventListeners } from "./events.js"; // Importe la fonction pour configurer les écouteurs d'événements globaux
+import { setupContactLink } from "./events.js"; // Importe la fonction pour configurer le lien de contact
+import { setupProjetLink } from "./events.js"; // Importe la fonction pour configurer le lien de projet
 
-// Affiche un message différent selon le mode
+// Log pour indiquer si les messages de console sont activés ou désactivés selon l'environnement
 if (isProduction) {
-  console.log("Mode Production : Console.log désactivé");
+  console.log("Mode Production main.js : Console.log désactivé");
 } else {
-  console.log("Mode Production : Console.log activé");
+  console.log("Mode Développement  main.js : Console.log activé");
 }
 
+// Appel de la fonction d'initialisation
+initializeApp();
+// Puis, après une opération d'ajout ou de suppression réussie, appelez :
+refreshWorks();
+
+/**
+ * Initialise l'application en récupérant et en affichant les données requises,
+ * en vérifiant l'état de connexion et en configurant les liens et les écouteurs d'événements.
+ */
 async function initializeApp() {
+  if (!isProduction) console.log("Fonction initializeApp");
   try {
+    // Rafraîchit les données des " Work "  affichées
     refreshWorks();
 
+    // Récupère les catégories depuis l'API et les affiche
     const categoriesData = await fetchCategories();
-    displayCategories(categoriesData); // Mettez à jour l'UI avec les catégories récupérées
+    displayCategories(categoriesData);
 
-    checkLoginState(); // Vérifie l'état de connexion et met à jour l'UI en conséquence
-    setupLoginLink(); // Configure le gestionnaire d'événements pour le lien de connexion/déconnexion
-    setupContactLink(); // Configure le gestionnaire d'événements pour le lien de contact
-    setupProjetLink(); // Configure le gestionnaire d'événements pour le lien de Projet
+    // Vérifie l'état de connexion et met à jour l'interface utilisateur en conséquence
+    checkLoginState();
+    // Configure les liens et les écouteurs d'événements
+    setupLoginLink();
+    setupContactLink();
+    setupProjetLink();
 
+    // Configure les écouteurs d'événements supplémentaires pour l'application
     setUpEventListeners();
   } catch (error) {
+    // Log l'erreur si l'initialisation échoue
     console.error("Erreur lors de l'initialisation de l'application :", error);
   }
 }
 
-initializeApp();
+/**
+ * Rafraîchit les " Work "  en les récupérant de nouveau et en mettant à jour l'interface utilisateur.
+ */
 export async function refreshWorks() {
+  if (!isProduction) console.log("Fonction refreshWorks");
   try {
+    // Récupère les " Work "  depuis l'API
     const works = await fetchWorks();
-    setWorksData(works); // Stockez les données de works dans le store
-    displayWorks(works); // Mettez à jour l'UI avec les travaux récupérés
+    // Stocke les données récupérées dans le store
+    setWorksData(works);
+    // Affiche les " Work "  dans l'interface utilisateur
+    displayWorks(works);
   } catch (error) {
+    // Log l'erreur si le rafraîchissement des " Work "  échoue
     console.error("Erreur lors du rafraîchissement des travaux et des catégories :", error);
   }
 }
-
-// ...
-
-// Puis, après une opération d'ajout ou de suppression réussie, appelez :
-refreshWorks();
