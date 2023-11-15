@@ -306,10 +306,10 @@ export function handleFileSelect(event, fileInput, imagePreviewContainer, delete
   } else {
     // Ajoutez un message d'erreur pour les fichiers trop volumineux.
     if (files[0].size > 4 * 1024 * 1024) {
-      alert("La taille de l'image ne doit pas dépasser 4 Mo.");
+      showConfirmationModal("La taille de l'image ne doit pas dépasser 4 Mo.", "alerte");
     } else {
       // Si le fichier n'est pas une image JPEG ou PNG ou si plusieurs fichiers ont été sélectionnés, affiche un message d'erreur.
-      alert("Veuillez sélectionner une seule image de type JPEG ou PNG.");
+      showConfirmationModal("Veuillez sélectionner une seule image de type JPEG ou PNG.", "alerte");
     }
   }
 }
