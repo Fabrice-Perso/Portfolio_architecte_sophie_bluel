@@ -1,4 +1,5 @@
 // main.js
+import { isProduction } from "./config.js";
 import { fetchWorks, fetchCategories } from "./api.js";
 import { setWorksData } from "./store.js";
 import { displayWorks, displayCategories } from "./ui.js";
@@ -7,6 +8,13 @@ import { checkLoginState } from "./auth.js";
 import { setUpEventListeners } from "./events.js";
 import { setupContactLink } from "./events.js";
 import { setupProjetLink } from "./events.js";
+
+// Affiche un message différent selon le mode
+if (isProduction) {
+  console.log("Mode Production : Console.log désactivé");
+} else {
+  console.log("Mode Production : Console.log activé");
+}
 
 async function initializeApp() {
   try {

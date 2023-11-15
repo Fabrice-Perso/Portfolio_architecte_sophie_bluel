@@ -1,22 +1,35 @@
 // login.js
-import { handleLoginFormSubmit } from "./auth.js"; // Assurez-vous que le chemin est correct
-import { checkLoginState } from "./auth.js";
-import { setupContactLink } from "./events.js";
-import { setupProjetLink } from "./events.js";
+import { isProduction } from "./config.js";
+import { handleLoginFormSubmit } from "./auth.js"; // Importation de la fonction de gestion de soumission du formulaire de connexion
+import { checkLoginState } from "./auth.js"; // Importation de la fonction de vérification de l'état de connexion
+import { setupContactLink } from "./events.js"; // Importation de la fonction de configuration du lien de contact
+import { setupProjetLink } from "./events.js"; // Importation de la fonction de configuration du lien de projet
 
-// Fonction pour initialiser le formulaire de connexion
+// Affichage d'un message pour indiquer si les logs de débogage sont activés ou non en fonction du mode de production
+if (isProduction) {
+  console.log("Mode Production : Console.log désactivé");
+} else {
+  console.log("Mode Production : Console.log activé");
+}
+
+/**
+ * Initialise le formulaire de connexion en ajoutant un gestionnaire d'événements pour la soumission.
+ */
 async function initLoginForm() {
-  const loginForm = document.querySelector("form");
+  const loginForm = document.querySelector("form"); // Sélection du formulaire dans le DOM
 
-  // Assurez-vous que le formulaire existe avant d'ajouter un gestionnaire d'événements
+  // Ajout d'un gestionnaire d'événements pour la soumission du formulaire si le formulaire existe
   if (loginForm) {
     loginForm.addEventListener("submit", handleLoginFormSubmit);
   }
 }
 
-// Exécutez la fonction initLoginForm directement
+// Initialisation du formulaire de connexion
 initLoginForm();
-// Fonction pour vérifier l'état de connexion lors du chargement de la page
+
+// Vérification de l'état de connexion de l'utilisateur lors du chargement de la page
 checkLoginState();
-setupContactLink(); // Configure le gestionnaire d'événements pour le lien de contact
-setupProjetLink(); // Configure le gestionnaire d'événements pour le lien de Projet
+
+// Configuration des liens de navigation supplémentaires
+setupContactLink(); // Assigne un gestionnaire d'événements au lien de contact
+setupProjetLink(); // Assigne un gestionnaire d'événements au lien de projet
