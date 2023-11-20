@@ -441,14 +441,21 @@ span i {
 }
 
 .close-btn {
-  font-size: 1.5rem; /* Assurez-vous que la taille de la police est la même */
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.close-btn-confirm {
   cursor: pointer;
   position: absolute;
   top: 5px;
   right: 5px;
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 25px;
   cursor: pointer;
 }
 

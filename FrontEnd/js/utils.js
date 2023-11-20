@@ -1,5 +1,6 @@
 import { isProduction } from "./config.js";
 import { refreshWorks } from "./main.js";
+import { fetchWorks, fetchAddWork, fetchDeleteWork } from "./api.js";
 
 /**
  * Supprime un " Work "  donnée par son identifiant.
@@ -9,7 +10,6 @@ import { refreshWorks } from "./main.js";
 export async function deleteWork(workId) {
   if (!isProduction) console.log("Fonction deleteWork");
 
-  const apiUrl = "http://localhost:5678/api/works/";
   // Obtenez le token d'authentification du localStorage pour l'authentification de la requête
   const token = localStorage.getItem("token");
 
@@ -21,28 +21,17 @@ export async function deleteWork(workId) {
   }
 
   try {
-    // Exécutez la requête DELETE à l'API
-    const response = await fetch(`${apiUrl}${workId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Ajoutez le token au header pour l'authentification
-      },
-    });
+    // Utilisez fetchDeleteWork pour effectuer la suppression
+    const deletionResult = await fetchDeleteWork(workId, token);
 
-    // Si la réponse n'est pas ok, traitez l'erreur
-    if (!response.ok) {
-      const errorData = await response.json(); // Récupérez le corps de la réponse d'erreur
-      console.error("Détails de l'erreur de suppression:", errorData);
-      throw new Error(`Erreur lors de la suppression : ${response.status} ${JSON.stringify(errorData)}`);
+    if (deletionResult) {
+      if (!isProduction) console.log("Suppression réussie");
+
+      // Affichez un modal de confirmation et rafraîchissez le contenu
+      showConfirmationModal("Suppression effectuée avec succès.", "delete");
+      await refreshModalContent();
+      await refreshWorks();
     }
-
-    if (!isProduction) console.log("Suppression réussie");
-
-    // Affichez un modal de confirmation et rafraîchissez le contenu
-    showConfirmationModal("Suppression effectuée avec succès.", "delete");
-    await refreshModalContent();
-    await refreshWorks();
   } catch (error) {
     // Log l'erreur et gérez l'erreur dans l'interface utilisateur, par exemple en affichant un message d'erreur
     console.error("Erreur lors de la suppression:", error);
@@ -67,7 +56,7 @@ function showConfirmationModal(message, actionType) {
 
   // Créez un bouton de fermeture pour le modal
   const closeBtn = document.createElement("span");
-  closeBtn.classList.add("close-btn");
+  closeBtn.classList.add("close-btn-confirm");
   closeBtn.innerHTML = "&times;";
   closeBtn.setAttribute("title", "Fermer");
   closeBtn.onclick = function () {
@@ -127,12 +116,8 @@ function goBack() {
 async function refreshModalContent() {
   if (!isProduction) console.log("Fonction refreshModalContent");
   try {
-    // Effectuez une requête GET pour récupérer les données des " Work "
-    const response = await fetch("http://localhost:5678/api/works/");
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const worksData = await response.json();
+    // Utilisez la fonction fetchWorks pour récupérer les données des "Work"
+    const worksData = await fetchWorks();
 
     // Sélectionnez le conteneur existant des images dans le modal
     const imagesContainer = document.querySelector(".images-container");
@@ -146,7 +131,7 @@ async function refreshModalContent() {
       imagesContainer.removeChild(imagesContainer.firstChild);
     }
 
-    // Ajoutez les éléments mis à jour à partir des données des " Work "  récupérées
+    // Ajoutez les éléments mis à jour à partir des données des "Work" récupérées
     worksData.forEach((work) => {
       const imageWrapper = createImageWrapper(work); // Supposez l'existence d'une fonction 'createImageWrapper'
       imagesContainer.appendChild(imageWrapper);
@@ -166,7 +151,6 @@ async function refreshModalContent() {
  */
 function createImageWrapper(work) {
   if (!isProduction) console.log("Fonction createImageWrapper");
-
   // Crée un conteneur div pour l'image et l'icône de suppression
   var imageWrapper = document.createElement("div");
   imageWrapper.classList.add("modal-image-wrapper");
@@ -213,12 +197,10 @@ export async function handleFormSubmit(event, fileInput, titleInput, categorySel
 
   event.preventDefault(); // Empêche le comportement par défaut de soumission du formulaire.
 
-  // Créez un objet FormData pour être envoyé dans la requête POST.
   const formData = new FormData();
-  formData.append("image", fileInput.files[0]); // Ajoutez l'image au formData.
-  formData.append("title", titleInput.value); // Ajoutez le titre au formData.
-  formData.append("category", categorySelect.value); // Ajoutez la catégorie sélectionnée au formData.
-  // Ajoutez l'userId récupéré du localStorage ou d'un autre mécanisme d'authentification au formData.
+  formData.append("image", fileInput.files[0]);
+  formData.append("title", titleInput.value);
+  formData.append("category", categorySelect.value);
   formData.append("userId", localStorage.getItem("userId"));
 
   // Log pour le débogage
@@ -230,27 +212,19 @@ export async function handleFormSubmit(event, fileInput, titleInput, categorySel
   }
 
   try {
-    // Envoyez les données du formulaire au serveur.
-    const response = await fetch("http://localhost:5678/api/works", {
-      method: "POST",
-      body: formData, // Envoi du formData.
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // Ajoutez le token d'authentification dans les headers.
-      },
-    });
-
-    // Gérez les réponses non réussies en lançant une exception.
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Détails de l'erreur d'ajout:", errorData);
-      throw new Error(`Erreur lors de l'ajout : ${response.status} ${JSON.stringify(errorData)}`);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Aucun token d'authentification trouvé");
+      return;
     }
 
-    // Si la réponse est réussie, affichez un modal de confirmation et rafraîchissez la liste des " Work " .
-    const responseData = await response.json();
+    // Utilisez fetchAddWork pour ajouter le travail
+    const responseData = await fetchAddWork(formData, token);
+
+    // Si la réponse est réussie, affichez un modal de confirmation et rafraîchissez la liste des travaux.
     if (!isProduction) console.log("Success:", responseData);
 
-    showConfirmationModal("Ajout effectuée avec succès.", "add");
+    showConfirmationModal("Ajout effectué avec succès.", "add");
     await refreshWorks();
   } catch (error) {
     // Log l'erreur et affichez un message d'erreur approprié à l'utilisateur.

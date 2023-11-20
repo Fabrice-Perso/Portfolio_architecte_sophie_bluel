@@ -2,6 +2,7 @@
 import { isProduction } from "./config.js";
 import { createEditModeDiv, removeEditModeDiv } from "./events.js";
 import { createEditModeProjet, removeEditModeProjet } from "./ui.js";
+import { fetchLogin } from "./api.js";
 
 /**
  * Gère la soumission du formulaire de connexion.
@@ -18,27 +19,11 @@ export async function handleLoginFormSubmit(event) {
   const password = document.getElementById("password").value;
 
   try {
-    // Tentative de connexion au serveur
-    const response = await fetch("http://localhost:5678/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    // Tentative de connexion au serveur en utilisant la fonction fetchLogin
+    const data = await fetchLogin(email, password);
 
-    // Gestion des réponses non réussies
-    if (!response.ok) {
-      if (!isProduction) console.error("Response not OK:", response);
-      throw new Error("Les informations d'identifications sont incorrectes.");
-    }
-
-    // Traitement de la réponse
-    const data = await response.json();
-    if (!isProduction) console.log("Login successful, received data:", data);
-
-    // Si les données incluent un token, mise à jour du localStorage
-    if (data.token) {
+    // Si les données incluent un token et userId, mettez à jour le localStorage et l'UI
+    if (data.token && data.userId) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.userId);
       if (!isProduction) console.log("userId enregistré dans localStorage:", localStorage.getItem("userId"));
@@ -49,9 +34,9 @@ export async function handleLoginFormSubmit(event) {
       if (!isProduction) console.log("Redirecting to home page");
       showModal("Connexion réussie.", true, "index.html");
     } else {
-      // Gestion de l'absence de token
-      if (!isProduction) console.error("Token is missing in the response");
-      throw new Error("Token manquant dans la réponse.");
+      // Gestion de l'absence de token ou userId
+      if (!isProduction) console.error("Token or userId is missing in the response");
+      throw new Error("Token ou userId manquant dans la réponse.");
     }
   } catch (error) {
     // Gestion des erreurs de connexion
@@ -118,9 +103,11 @@ function handleLogout() {
 
   // Supprime le token du localStorage, effaçant ainsi la session de l'utilisateur
   localStorage.removeItem("token");
+  localStorage.removeItem("userId");
 
   // Met à jour le statut de connexion dans localStorage pour indiquer que l'utilisateur n'est plus connecté
   localStorage.setItem("isLoggedIn", "false");
+  localStorage.removeItem("isLoggedIn");
 
   // Récupère l'élément de lien de connexion et met à jour son texte pour "Log In"
   const loginLink = document.getElementById("login-link");
@@ -187,7 +174,7 @@ function showModal(message, isSuccess, redirectUrl) {
   modalContent.className = isSuccess ? "modal-content success" : "modal-content failure";
 
   // Configure le bouton de fermeture du modal
-  closeBtn.classList.add("close-btn");
+  closeBtn.classList.add("close-btn-confirm");
   closeBtn.innerHTML = "&times;";
   closeBtn.setAttribute("title", "Fermer");
   closeBtn.onclick = handleModalClose;

@@ -31,9 +31,8 @@ async function initializeApp() {
     // Rafraîchit les données des " Work "  affichées
     refreshWorks();
 
-    // Récupère les catégories depuis l'API et les affiche
-    const categoriesData = await fetchCategories();
-    displayCategories(categoriesData);
+    // Rafraîchit les données des " Categories "  affichées
+    refreshCategories();
 
     // Vérifie l'état de connexion et met à jour l'interface utilisateur en conséquence
     checkLoginState();
@@ -64,6 +63,23 @@ export async function refreshWorks() {
     displayWorks(works);
   } catch (error) {
     // Log l'erreur si le rafraîchissement des " Work "  échoue
-    console.error("Erreur lors du rafraîchissement des travaux et des catégories :", error);
+    console.error("Erreur lors du rafraîchissement des travaux :", error);
+  }
+}
+
+/**
+ * Rafraîchit les " Catégories "  en les récupérant de nouveau et en mettant à jour l'interface utilisateur.
+ */
+export async function refreshCategories() {
+  if (!isProduction) console.log("Fonction refreshCategories");
+  try {
+    // Récupère les " Categories "  depuis l'API
+    const categoriesData = await fetchCategories();
+
+    // Affiche les " Categories "  dans l'interface utilisateur
+    displayCategories(categoriesData);
+  } catch (error) {
+    // Log l'erreur si le rafraîchissement des " Categories "  échoue
+    console.error("Erreur lors du rafraîchissement des catégories :", error);
   }
 }
