@@ -3,6 +3,26 @@ import { isProduction } from "./config.js";
 
 const apiUrl = "http://localhost:5678/api"; // Définissez l'URL de base de votre API
 
+// Définissez une fonction pour vérifier la disponibilité de l'API
+export async function checkApiAvailability() {
+  try {
+    const response = await fetch("http://localhost:5678/api-docs/");
+
+    if (!response.ok) {
+      // La requête a échoué, donc l'API n'est pas disponible
+      console.log("L'API ne semble pas accessible à l'adresse suivante : http://localhost:5678/api-docs/ Veuillez contacter l'Administrateur du site");
+      return false;
+    } else {
+      // La requête a réussi, l'API est disponible
+      return true;
+    }
+  } catch (error) {
+    // Une erreur s'est produite lors de la requête
+    console.log("L'API ne semble pas accessible à l'adresse suivante : http://localhost:5678/api-docs/ Veuillez contacter l'Administrateur du site");
+    return false;
+  }
+}
+
 export async function fetchLogin(email, password) {
   try {
     const response = await fetch(`${apiUrl}/users/login`, {

@@ -1,13 +1,11 @@
 // main.js
 import { isProduction } from "./config.js";
-import { fetchWorks, fetchCategories } from "./api.js"; // Importe les fonctions API pour récupérer les données
+import { checkLoginState } from "./auth.js"; // Importation de la fonction de vérification de l'état de connexion
+import { setupLoginLink } from "./auth.js"; // Importation de la fonction de configuration du lien de contact,du lien de projet
+import { setupContactLink, setupProjetLink, setUpEventListeners } from "./events.js"; // Importation de la fonction de configuration du lien de contact,du lien de projet
+import { checkApiAvailability, fetchWorks, fetchCategories } from "./api.js"; // Importe les fonctions API pour récupérer les données
 import { setWorksData } from "./store.js"; // Importe la fonction pour stocker les données des travaux
 import { displayWorks, displayCategories } from "./ui.js"; // Importe les fonctions pour afficher les données dans l'UI
-import { setupLoginLink } from "./auth.js"; // Importe la fonction pour configurer le lien de connexion/déconnexion
-import { checkLoginState } from "./auth.js"; // Importe la fonction pour vérifier l'état de connexion
-import { setUpEventListeners } from "./events.js"; // Importe la fonction pour configurer les écouteurs d'événements globaux
-import { setupContactLink } from "./events.js"; // Importe la fonction pour configurer le lien de contact
-import { setupProjetLink } from "./events.js"; // Importe la fonction pour configurer le lien de projet
 
 // Log pour indiquer si les messages de console sont activés ou désactivés selon l'environnement
 if (isProduction) {
@@ -16,10 +14,15 @@ if (isProduction) {
   console.log("Mode Développement  main.js : Console.log activé");
 }
 
-// Appel de la fonction d'initialisation
-initializeApp();
-// Puis, après une opération d'ajout ou de suppression réussie, appelez :
-refreshWorks();
+// Appelez la fonction pour vérifier la disponibilité de l'API
+checkApiAvailability().then((apiAvailable) => {
+  if (apiAvailable) {
+    // L'API est disponible, vous pouvez maintenant appeler les autres fonctions
+    initializeApp();
+    // Puis, après une opération d'ajout ou de suppression réussie, appelez :
+    refreshWorks();
+  }
+});
 
 /**
  * Initialise l'application en récupérant et en affichant les données requises,
@@ -41,7 +44,7 @@ async function initializeApp() {
     setupContactLink();
     setupProjetLink();
 
-    // Configure les écouteurs d'événements supplémentaires pour l'application
+    // // Configure les écouteurs d'événements supplémentaires pour l'application
     setUpEventListeners();
   } catch (error) {
     // Log l'erreur si l'initialisation échoue
