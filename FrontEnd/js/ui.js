@@ -115,6 +115,7 @@ function filterWorksByCategory(buttonId, categories) {
  */
 export function createEditModeProjet() {
   if (!isProduction) console.log("Fonction createEditModeProjet");
+
   // Trouver le titre de la section projet pour y ajouter le mode édition
   const title = document.querySelector("#portfolio h2");
 
@@ -154,13 +155,17 @@ export function createEditModeProjet() {
  */
 export function removeEditModeProjet() {
   if (!isProduction) console.log("Fonction removeEditModeProjet");
+
   // Trouver le conteneur du titre qui inclut le mode édition
-  const titleContainer = document.querySelector("#portfolio .title-container");
+  const titleContainer = document.querySelector("#portfolio span");
 
   // Si le conteneur du mode édition est trouvé, l'enlever du DOM
   if (titleContainer) {
     titleContainer.remove();
   }
+
+  const categoryButtons = document.querySelector("#category-buttons");
+  categoryButtons.style.visibility = "visible";
 }
 
 /**

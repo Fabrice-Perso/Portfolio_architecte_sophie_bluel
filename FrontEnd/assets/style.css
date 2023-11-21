@@ -185,14 +185,19 @@ nav ul {
   list-style-type: none;
 }
 nav li {
-  padding: 0 10px;
-  font-size: 1.2em;
+  padding: 0 20px;
+  font-size: 1em;
   cursor: pointer;
+}
+.nav-icon {
+  width: 22px;
+  height: 22px;
 }
 
 li:hover {
   color: #b1663c;
 }
+
 #introduction {
   display: flex;
   align-items: center;
@@ -208,7 +213,6 @@ li:hover {
 
 #introduction article {
   flex: 1;
-  padding-right: 20px;
 }
 #introduction h2 {
   margin-bottom: 1em;
@@ -220,6 +224,7 @@ li:hover {
 #portfolio h2 {
   text-align: center;
   margin-bottom: 1em;
+  margin-top: 2em;
 }
 .gallery {
   width: 90%;
@@ -368,6 +373,7 @@ footer nav ul li {
 
 .title-container span {
   margin-left: 5px;
+  margin-top: 4em;
   text-align: center;
   font-family: Work Sans;
   color: black;
@@ -745,4 +751,78 @@ select {
   font-weight: 700;
   line-height: normal;
   margin: 10px;
+}
+
+/* Login.html */
+.nav-login {
+  font-weight: 600;
+}
+.form-login {
+  min-height: 43.25rem;
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* Centre le texte du formulaire */
+  max-width: 400px; /* Largeur maximale du formulaire */
+  margin: 0 auto; /* Centre le formulaire horizontalement */
+  padding: 20px; /* Ajoute de l'espace intérieur au formulaire */
+}
+
+.login h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+label {
+  text-align: left;
+  color: #3d3d3d;
+  font-family: Work Sans;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: block;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+#email,
+#password {
+  height: 3.1875rem;
+  width: 24.6875rem;
+  flex-shrink: 0;
+  border: none;
+  background: #fff;
+  box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+  margin-bottom: 40px;
+  cursor: pointer;
+}
+
+.password_forget {
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  color: #3d3d3d;
+  font-family: Work Sans;
+  font-size: 0.875rem;
+  font-style: normal;
+  line-height: normal;
+  text-decoration-line: underline;
+}
+
+footer {
+  height: 3.75rem;
+  flex-shrink: 0;
+  background: #fff;
+  color: #3d3d3d;
+  font-family: Work Sans;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
 }
