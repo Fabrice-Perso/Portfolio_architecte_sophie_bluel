@@ -56,7 +56,7 @@ export function checkLoginState() {
 
   // Met à jour les éléments de navigation pour refléter l'état de connexion
   updateNavigation();
-
+  const categoryButtons = document.querySelector("#category-buttons");
   // Vérifie si l'utilisateur est marqué comme connecté dans localStorage
   if (localStorage.getItem("isLoggedIn") === "true") {
     if (!isProduction) console.log("Utilisateur connecté : on crée/affiche les élèments du mode Admin");
@@ -64,19 +64,20 @@ export function checkLoginState() {
     // Crée des éléments d'interface utilisateur pour le mode d'édition
     createEditModeDiv();
     createEditModeProjet();
+    categoryButtons.style.visibility = "hidden";
   } else {
     if (!isProduction) console.log("Utilisateur non connecté : on supprime les élèments du mode Admin");
-
     // Supprime les éléments d'interface utilisateur du mode d'édition
     removeEditModeDiv();
     removeEditModeProjet();
+    categoryButtons.style.visibility = "visible";
   }
 }
 
 /**
  * Met à jour l'élément de navigation pour refléter l'état de connexion de l'utilisateur.
- * Si l'utilisateur est connecté, le texte du lien de connexion affichera "Log Out",
- * sinon il affichera "Log In". Ceci est déterminé par la valeur de 'isLoggedIn' dans localStorage.
+ * Si l'utilisateur est connecté, le texte du lien de connexion affichera "logout",
+ * sinon il affichera "login". Ceci est déterminé par la valeur de 'isLoggedIn' dans localStorage.
  */
 function updateNavigation() {
   if (!isProduction) console.log("Fonction updateNavigation lue");
@@ -88,7 +89,7 @@ function updateNavigation() {
   const loginLink = document.getElementById("login-link");
 
   // Met à jour le texte du lien de connexion selon que l'utilisateur est connecté ou non
-  loginLink.textContent = isLoggedIn ? "Log Out" : "Log In";
+  loginLink.textContent = isLoggedIn ? "logout" : "login";
 }
 
 /**
@@ -109,9 +110,9 @@ function handleLogout() {
   localStorage.setItem("isLoggedIn", "false");
   localStorage.removeItem("isLoggedIn");
 
-  // Récupère l'élément de lien de connexion et met à jour son texte pour "Log In"
+  // Récupère l'élément de lien de connexion et met à jour son texte pour "login"
   const loginLink = document.getElementById("login-link");
-  loginLink.textContent = "Log In";
+  loginLink.textContent = "login";
 
   // Exécute les fonctions pour supprimer les éléments d'interface utilisateur spécifiques au mode connecté
   removeEditModeDiv();

@@ -14,6 +14,9 @@ if (isProduction) {
   console.log("Mode Développement  main.js : Console.log activé");
 }
 
+/**
+ * Verifie si API est accessible et affiche un message
+ */
 // Appelez la fonction pour vérifier la disponibilité de l'API
 checkApiAvailability().then((apiAvailable) => {
   if (apiAvailable) {
@@ -39,6 +42,7 @@ async function initializeApp() {
 
     // Vérifie l'état de connexion et met à jour l'interface utilisateur en conséquence
     checkLoginState();
+
     // Configure les liens et les écouteurs d'événements
     setupLoginLink();
     setupContactLink();
