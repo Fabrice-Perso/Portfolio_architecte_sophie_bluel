@@ -164,8 +164,53 @@ export function removeEditModeProjet() {
     titleContainer.remove();
   }
 
+  // const categoryButtons = document.querySelector("#category-buttons");
+  // categoryButtons.style.visibility = "visible";
+}
+
+/**
+ * Crée et ajoute une div indiquant le mode édition au début du corps de la page.
+ */
+export function createEditModeDiv() {
+  if (!isProduction) console.log("Fonction createEditModeDiv");
+  const editModeDiv = document.createElement("div");
+  editModeDiv.classList.add("edit-mode-div");
+
+  const editModeIcon = document.createElement("i");
+  editModeIcon.classList.add("fa-regular", "fa-pen-to-square", "edit-mode-icon");
+  editModeDiv.appendChild(editModeIcon);
+
+  const editModeText = document.createElement("p");
+  editModeText.textContent = "Mode édition";
+  editModeText.classList.add("edit-mode-text");
+  editModeDiv.appendChild(editModeText);
+
+  document.body.insertBefore(editModeDiv, document.body.firstChild); // Insère la div en mode édition en haut de la page
+  // Pour masquer les boutons de catégorie
+  toggleFilterCat(false);
+}
+
+/**
+ * Supprime la div du mode édition du corps de la page, si elle existe.
+ */
+export function removeEditModeDiv() {
+  if (!isProduction) console.log("Fonction removeEditModeDiv");
+  const editModeDiv = document.querySelector(".edit-mode-div");
+  if (editModeDiv) {
+    editModeDiv.remove(); // Retire la div du mode édition
+  }
+  // Pour afficher les boutons de catégorie
+  toggleFilterCat(true);
+}
+
+/**
+ * Masque les boutons de filtre sur la page index.html
+ */
+export function toggleFilterCat(shouldDisplay) {
   const categoryButtons = document.querySelector("#category-buttons");
-  categoryButtons.style.visibility = "visible";
+  if (categoryButtons) {
+    categoryButtons.style.visibility = shouldDisplay ? "visible" : "hidden";
+  }
 }
 
 /**

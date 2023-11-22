@@ -201,7 +201,9 @@ li:hover {
 #introduction {
   display: flex;
   align-items: center;
+  margin: 50px 0;
 }
+
 #introduction figure {
   flex: 1;
 }
@@ -221,6 +223,12 @@ li:hover {
 #introduction p {
   margin-bottom: 0.5em;
 }
+
+#portfolio {
+  display: flex;
+  flex-direction: column;
+  margin: 50px 0;
+}
 #portfolio h2 {
   text-align: center;
   margin-bottom: 1em;
@@ -238,11 +246,16 @@ li:hover {
 .gallery img {
   width: 100%;
 }
+
 /* Formulaire de contact */
 #contact {
+  display: flex;
+  flex-direction: column;
+  margin: 50px 0;
   width: 50%;
   margin: auto;
 }
+
 #contact > * {
   text-align: center;
 }
@@ -777,7 +790,7 @@ select {
   margin-bottom: 20px;
 }
 
-label {
+.label-login {
   text-align: left;
   color: #3d3d3d;
   font-family: Work Sans;
@@ -790,8 +803,7 @@ label {
   cursor: pointer;
 }
 
-#email,
-#password {
+.input-login {
   height: 3.1875rem;
   width: 24.6875rem;
   flex-shrink: 0;

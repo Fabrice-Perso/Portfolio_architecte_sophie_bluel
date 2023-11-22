@@ -1,6 +1,6 @@
 // auth.js
 import { isProduction } from "./config.js";
-import { createEditModeDiv, removeEditModeDiv } from "./events.js";
+import { createEditModeDiv, removeEditModeDiv } from "./ui.js";
 import { createEditModeProjet, removeEditModeProjet } from "./ui.js";
 import { fetchLogin } from "./api.js";
 
@@ -56,7 +56,7 @@ export function checkLoginState() {
 
   // Met à jour les éléments de navigation pour refléter l'état de connexion
   updateNavigation();
-  const categoryButtons = document.querySelector("#category-buttons");
+
   // Vérifie si l'utilisateur est marqué comme connecté dans localStorage
   if (localStorage.getItem("isLoggedIn") === "true") {
     if (!isProduction) console.log("Utilisateur connecté : on crée/affiche les élèments du mode Admin");
@@ -64,13 +64,11 @@ export function checkLoginState() {
     // Crée des éléments d'interface utilisateur pour le mode d'édition
     createEditModeDiv();
     createEditModeProjet();
-    categoryButtons.style.visibility = "hidden";
   } else {
     if (!isProduction) console.log("Utilisateur non connecté : on supprime les élèments du mode Admin");
     // Supprime les éléments d'interface utilisateur du mode d'édition
     removeEditModeDiv();
     removeEditModeProjet();
-    categoryButtons.style.visibility = "visible";
   }
 }
 
